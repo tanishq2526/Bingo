@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Bingo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
 <style>
   /* ---------- Theme tokens ---------- */
   /* Every theme defines every token. Default = Neo-Brutalism */
@@ -11,6 +14,7 @@
     --bg: radial-gradient(rgba(0,0,0,.2) 1.5px, transparent 1.6px) 0 0 / 20px 20px, #ffde59;
     --text: #000; --sub: #000; --muted: #000; --win: #000;
     --font: "Arial Black", "Helvetica Neue", Arial, sans-serif; --blur: none;
+    --ball-fs: clamp(24px, 7vw, 36px); --cell-fs: clamp(20px, 6vw, 30px);
     --ball-bg: #fff; --ball-bd: 3px solid #000; --ball-r: 8px; --ball-shadow: 3px 3px 0 #000;
     --accent: #ff5db1; --accent-ink: #000; --accent-edge: #000; --chip-on-bd: #000; --on-shadow: 5px 5px 0 #000;
     --card-bg: #5ce1e6; --card-r: 10px; --card-bd: 4px solid #000; --card-shadow: 10px 10px 0 #000;
@@ -63,17 +67,25 @@
     --mark: #ff7a59; --mark-w: 8px; --mark-r: 8px; --mark-glow: 0 3px 4px rgba(150,60,30,.3); --strike-glow: drop-shadow(0 3px 3px rgba(150,60,30,.3));
     --btn-bg: #ff8fb1; --btn-ink: #fff; --btn-edge: #d9638a; --btn-bd: 0; --btn-r: 999px;
   }
-  :root[data-theme="oled"] {
-    --bg: #000;
-    --text: #f2f2f2; --sub: #9a9a9a; --muted: #5a5a5a; --win: #2dff9a;
-    --font: "SF Pro Display", "Segoe UI", system-ui, -apple-system, sans-serif; --blur: none;
-    --ball-bg: #050505; --ball-bd: 1px solid #262626; --ball-r: 50%; --ball-shadow: none;
-    --accent: #2dff9a; --accent-ink: #000; --accent-edge: #2dff9a; --chip-on-bd: #2dff9a; --on-shadow: 0 0 22px rgba(45,255,154,.55);
-    --card-bg: #000; --card-r: 28px; --card-bd: 1px solid #1f1f1f; --card-shadow: none;
-    --cell-bg: #0a0a0a; --cell-hover: #181818; --cell-ink: #ededed; --cell-done: #4a4a4a;
-    --cell-bd: #2a2a2a; --cell-bw: 1px; --cell-r: 50%; --cell-shadow: none; --cell-text-shadow: none;
-    --mark: #2dff9a; --mark-w: 3px; --mark-r: 2px; --mark-glow: 0 0 8px rgba(45,255,154,.7); --strike-glow: drop-shadow(0 0 5px #2dff9a);
-    --btn-bg: #2dff9a; --btn-ink: #000; --btn-edge: #12a860; --btn-bd: 0; --btn-r: 999px;
+  :root[data-theme="minecraft"] {
+    /* grass strip on top of a dirt checker */
+    --bg: linear-gradient(#6fbf4a 0 44px, #4d8a2f 44px 52px, transparent 52px),
+          repeating-conic-gradient(#8a5a33 0 25%, #7a4e2c 0 50%) 0 0 / 48px 48px;
+    --text: #fff; --sub: #ececec; --muted: #3f3f3f; --win: #ffe44d;
+    --font: "VT323", "Courier New", monospace; --blur: none;
+    --ball-fs: clamp(28px, 8vw, 42px); --cell-fs: clamp(28px, 8vw, 40px);
+    --ball-bg: #8b8b8b; --ball-bd: none; --ball-r: 0; --ball-shadow: inset 4px 4px 0 #373737, inset -4px -4px 0 #fff;
+    --accent: #5fa84a; --accent-ink: #fff; --accent-edge: #5fa84a; --chip-on-bd: #000;
+    --on-shadow: inset 4px 4px 0 #9bdc82, inset -4px -4px 0 #2e5f22, 0 6px 0 rgba(0,0,0,.35);
+    --card-bg: #c6c6c6; --card-r: 0; --card-bd: 4px solid #000;
+    --card-shadow: inset 4px 4px 0 #fff, inset -4px -4px 0 #555, 8px 8px 0 rgba(0,0,0,.35);
+    --cell-bg: #8b8b8b; --cell-hover: #a5a5a5; --cell-ink: #fff; --cell-done: transparent;
+    --cell-bd: transparent; --cell-bw: 0px; --cell-r: 0;
+    --cell-shadow: inset 4px 4px 0 #373737, inset -4px -4px 0 #fff; --cell-text-shadow: 2px 2px 0 #3f3f3f;
+    --mark: #e03a2f; --mark-w: 6px; --mark-r: 0; --mark-glow: none; --strike-glow: none;
+    --btn-bg: #5fa84a; --btn-ink: #fff; --btn-edge: #2e5f22; --btn-bd: 3px solid #000; --btn-r: 0;
+    /* creeper face (6x6 pixels) used instead of the cross */
+    --creeper: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 6 6' shape-rendering='crispEdges'%3E%3Crect width='6' height='6' fill='%235fa84a'/%3E%3Cg fill='%23000'%3E%3Crect x='0' y='0' width='2' height='2'/%3E%3Crect x='4' y='0' width='2' height='2'/%3E%3Crect x='2' y='2' width='2' height='1'/%3E%3Crect x='1' y='3' width='4' height='2'/%3E%3Crect x='1' y='5' width='1' height='1'/%3E%3Crect x='4' y='5' width='1' height='1'/%3E%3C/g%3E%3C/svg%3E");
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -107,7 +119,7 @@
   .ball {
     width: clamp(48px, 13vw, 68px); aspect-ratio: 1; border-radius: var(--ball-r);
     display: grid; place-items: center;
-    font-size: clamp(24px, 7vw, 36px); font-weight: 800;
+    font-size: var(--ball-fs); font-weight: 800;
     color: var(--muted); background: var(--ball-bg); border: var(--ball-bd);
     box-shadow: var(--ball-shadow); -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
     transition: background .3s, color .3s, transform .3s, box-shadow .3s, border-color .3s;
@@ -134,7 +146,7 @@
     position: relative; border: var(--cell-bw) solid var(--cell-bd); border-radius: var(--cell-r);
     background: var(--cell-bg); color: var(--cell-ink);
     box-shadow: var(--cell-shadow); text-shadow: var(--cell-text-shadow);
-    font-family: var(--font); font-weight: 700; font-size: clamp(20px, 6vw, 30px);
+    font-family: var(--font); font-weight: 700; font-size: var(--cell-fs);
     cursor: pointer; transition: background .15s, transform .1s;
   }
   .cell:hover:not(.marked) { background: var(--cell-hover); }
@@ -177,6 +189,34 @@
   button.refresh:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--btn-edge); }
   button.refresh:focus-visible { outline: 3px solid var(--text); outline-offset: 3px; }
 
+  /* ---------- Minecraft extras ---------- */
+  :root[data-theme="minecraft"] body { text-shadow: 2px 2px 0 #3f3f3f; }
+  :root[data-theme="minecraft"] .status { font-size: 1.5rem; }
+  :root[data-theme="minecraft"] .bar button {
+    background: #8b8b8b; color: #fff; border: 3px solid #000; border-radius: 0; font-size: 1.2rem;
+    box-shadow: inset 3px 3px 0 #bdbdbd, inset -3px -3px 0 #555; text-shadow: 2px 2px 0 #3f3f3f;
+  }
+  :root[data-theme="minecraft"] .bar button:hover { background: #a0a0a0; }
+  :root[data-theme="minecraft"] .bar button[aria-checked="true"],
+  :root[data-theme="minecraft"] .bar button.sound[aria-pressed="true"] {
+    background: #5fa84a; box-shadow: inset 3px 3px 0 #9bdc82, inset -3px -3px 0 #2e5f22;
+  }
+  :root[data-theme="minecraft"] button.refresh {
+    font-size: 1.4rem; text-shadow: 2px 2px 0 #2e5f22;
+    box-shadow: inset 3px 3px 0 #9bdc82, inset -3px -3px 0 #2e5f22, 0 6px 0 #000;
+  }
+  :root[data-theme="minecraft"] button.refresh:active {
+    box-shadow: inset 3px 3px 0 #2e5f22, inset -3px -3px 0 #9bdc82, 0 2px 0 #000;
+  }
+  :root[data-theme="minecraft"] .cell.marked {
+    background-image: var(--creeper); background-size: 100% 100%; image-rendering: pixelated;
+    color: transparent; text-shadow: none; animation: blockpop .25s steps(4) both;
+  }
+  :root[data-theme="minecraft"] .cell.marked::before,
+  :root[data-theme="minecraft"] .cell.marked::after { display: none; }
+  :root[data-theme="minecraft"] .strikes line { stroke-linecap: square; }
+  @keyframes blockpop { from { transform: scale(.4); } to { transform: scale(1); } }
+
   @media (prefers-reduced-motion: reduce) {
     * { animation-duration: .01s !important; transition-duration: .01s !important; }
   }
@@ -216,7 +256,7 @@
     { id: "monochrome",   name: "Monochrome",     c: ["#f5f5f5", "#111111"] },
     { id: "glass",        name: "Glassmorphism",  c: ["#7873f5", "#ff6ec4"] },
     { id: "clay",         name: "Claymorphism",   c: ["#e4dcff", "#ff8fb1"] },
-    { id: "oled",         name: "OLED Aesthetic", c: ["#000000", "#2dff9a"] }
+    { id: "minecraft",    name: "Minecraft",      c: ["#7a4e2c", "#5fa84a"] }
   ];
   let theme = THEMES.some(t => t.id === store.get("bingoTheme")) ? store.get("bingoTheme") : THEMES[0].id;
 
@@ -282,7 +322,7 @@
     monochrome:   { wave: "sine",     scale: [440, 523, 659, 784],     tap: () => { noise(.025, .45, 3000); tone(900, .03, "sine", .05); } },        // mechanical click
     glass:        { wave: "sine",     scale: [784, 988, 1175, 1568],   tap: () => { tone(1568, .35, "sine", .15); tone(2349, .25, "sine", .06); } },   // glass ting
     clay:         { wave: "triangle", scale: [523, 659, 784, 1047],    tap: () => { tone(520, .14, "sine", .3, 0, 240); tone(260, .12, "triangle", .12); } }, // soft squish
-    oled:         { wave: "sine",     scale: [587, 740, 880, 1175],    tap: () => tone(1800, .045, "sine", .16, 0, 1200) }                              // crisp tick
+    minecraft:    { wave: "triangle", scale: [659, 784, 988, 1319],    tap: () => { noise(.06, .5, 500); tone(110, .08, "square", .14, 0, 70); } }       // stone block place
   };
   function sfx(kind) {
     const s = SND[theme];
