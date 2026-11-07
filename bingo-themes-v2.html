@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bingo</title>
+<style>
+  /* ---------- Theme tokens ---------- */
+  /* Every theme defines every token. Default = Neo-Brutalism */
+  :root, :root[data-theme="neobrutalism"] {
+    --bg: radial-gradient(rgba(0,0,0,.2) 1.5px, transparent 1.6px) 0 0 / 20px 20px, #ffde59;
+    --text: #000; --sub: #000; --muted: #000; --win: #000;
+    --font: "Arial Black", "Helvetica Neue", Arial, sans-serif; --blur: none;
+    --ball-bg: #fff; --ball-bd: 3px solid #000; --ball-r: 8px; --ball-shadow: 3px 3px 0 #000;
+    --accent: #ff5db1; --accent-ink: #000; --accent-edge: #000; --chip-on-bd: #000; --on-shadow: 5px 5px 0 #000;
+    --card-bg: #5ce1e6; --card-r: 10px; --card-bd: 4px solid #000; --card-shadow: 10px 10px 0 #000;
+    --cell-bg: #fff; --cell-hover: #fff3b0; --cell-ink: #000; --cell-done: rgba(0,0,0,.3);
+    --cell-bd: #000; --cell-bw: 3px; --cell-r: 6px; --cell-shadow: 3px 3px 0 #000; --cell-text-shadow: none;
+    --mark: #ff2e63; --mark-w: 7px; --mark-r: 0; --mark-glow: none; --strike-glow: none;
+    --btn-bg: #ff5db1; --btn-ink: #000; --btn-edge: #000; --btn-bd: 3px solid #000; --btn-r: 8px;
+  }
+  :root[data-theme="monochrome"] {
+    --bg: linear-gradient(160deg, #f5f5f5 0%, #d9d9d9 100%);
+    --text: #111; --sub: #444; --muted: #8c8c8c; --win: #111;
+    --font: "Helvetica Neue", Helvetica, Arial, sans-serif; --blur: none;
+    --ball-bg: transparent; --ball-bd: 1.5px solid #111; --ball-r: 0; --ball-shadow: none;
+    --accent: #111; --accent-ink: #fff; --accent-edge: #111; --chip-on-bd: #111; --on-shadow: none;
+    --card-bg: #fafafa; --card-r: 0; --card-bd: 1.5px solid #111; --card-shadow: 0 24px 40px rgba(0,0,0,.14);
+    --cell-bg: #fff; --cell-hover: #e6e6e6; --cell-ink: #111; --cell-done: rgba(17,17,17,.3);
+    --cell-bd: #111; --cell-bw: 1.5px; --cell-r: 0; --cell-shadow: none; --cell-text-shadow: none;
+    --mark: #111; --mark-w: 4px; --mark-r: 0; --mark-glow: none; --strike-glow: none;
+    --btn-bg: #111; --btn-ink: #fff; --btn-edge: #7a7a7a; --btn-bd: 0; --btn-r: 0;
+  }
+  :root[data-theme="glass"] {
+    --bg: radial-gradient(circle at 15% 20%, #ff6ec4 0, transparent 40%),
+          radial-gradient(circle at 85% 25%, #7873f5 0, transparent 45%),
+          radial-gradient(circle at 50% 95%, #19c6a3 0, transparent 45%), #1b1442;
+    --text: #fff; --sub: rgba(255,255,255,.82); --muted: rgba(255,255,255,.55); --win: #ffe066;
+    --font: "Segoe UI", "SF Pro Display", "Helvetica Neue", system-ui, sans-serif; --blur: blur(14px) saturate(140%);
+    --ball-bg: rgba(255,255,255,.12); --ball-bd: 1px solid rgba(255,255,255,.4); --ball-r: 50%; --ball-shadow: 0 6px 18px rgba(20,10,60,.25);
+    --accent: #fff; --accent-ink: #3b2a7a; --accent-edge: #fff; --chip-on-bd: #fff; --on-shadow: 0 8px 28px rgba(255,255,255,.45);
+    --card-bg: rgba(255,255,255,.14); --card-r: 28px; --card-bd: 1px solid rgba(255,255,255,.4); --card-shadow: 0 20px 50px rgba(20,10,60,.4);
+    --cell-bg: rgba(255,255,255,.16); --cell-hover: rgba(255,255,255,.3); --cell-ink: #fff; --cell-done: rgba(255,255,255,.45);
+    --cell-bd: rgba(255,255,255,.45); --cell-bw: 1px; --cell-r: 16px;
+    --cell-shadow: inset 0 1px 0 rgba(255,255,255,.5), 0 4px 14px rgba(0,0,0,.15); --cell-text-shadow: 0 1px 2px rgba(0,0,0,.25);
+    --mark: #ffe066; --mark-w: 5px; --mark-r: 3px; --mark-glow: 0 0 10px rgba(255,224,102,.7); --strike-glow: drop-shadow(0 0 5px rgba(255,224,102,.8));
+    --btn-bg: rgba(255,255,255,.24); --btn-ink: #fff; --btn-edge: rgba(255,255,255,.25); --btn-bd: 1px solid rgba(255,255,255,.55); --btn-r: 999px;
+  }
+  :root[data-theme="clay"] {
+    --bg: linear-gradient(160deg, #e4dcff 0%, #ffe3ee 100%);
+    --text: #4a3680; --sub: #6a58a0; --muted: #9d8fcc; --win: #d9456f;
+    --font: "Nunito", "Quicksand", "Trebuchet MS", "Segoe UI", system-ui, sans-serif; --blur: none;
+    --ball-bg: #efe8ff; --ball-bd: none; --ball-r: 50%;
+    --ball-shadow: inset -4px -4px 8px rgba(120,100,180,.2), inset 4px 4px 8px #fff, 4px 6px 10px rgba(100,80,160,.25);
+    --accent: #ff8fb1; --accent-ink: #fff; --accent-edge: #ffd0df; --chip-on-bd: #ff8fb1;
+    --on-shadow: inset -4px -4px 8px rgba(0,0,0,.15), inset 4px 4px 8px rgba(255,255,255,.5), 5px 8px 16px rgba(255,100,150,.5);
+    --card-bg: #f1ebff; --card-r: 42px; --card-bd: none;
+    --card-shadow: inset -10px -10px 20px rgba(120,100,180,.18), inset 10px 10px 20px rgba(255,255,255,.95), 14px 18px 34px rgba(100,80,160,.35);
+    --cell-bg: #fff7fb; --cell-hover: #ffe9f3; --cell-ink: #5b3f9a; --cell-done: rgba(91,63,154,.35);
+    --cell-bd: transparent; --cell-bw: 0px; --cell-r: 32%;
+    --cell-shadow: inset -5px -5px 10px rgba(180,120,170,.18), inset 5px 5px 10px rgba(255,255,255,.95), 5px 7px 12px rgba(100,80,160,.28);
+    --cell-text-shadow: none;
+    --mark: #ff7a59; --mark-w: 8px; --mark-r: 8px; --mark-glow: 0 3px 4px rgba(150,60,30,.3); --strike-glow: drop-shadow(0 3px 3px rgba(150,60,30,.3));
+    --btn-bg: #ff8fb1; --btn-ink: #fff; --btn-edge: #d9638a; --btn-bd: 0; --btn-r: 999px;
+  }
+  :root[data-theme="oled"] {
+    --bg: #000;
+    --text: #f2f2f2; --sub: #9a9a9a; --muted: #5a5a5a; --win: #2dff9a;
+    --font: "SF Pro Display", "Segoe UI", system-ui, -apple-system, sans-serif; --blur: none;
+    --ball-bg: #050505; --ball-bd: 1px solid #262626; --ball-r: 50%; --ball-shadow: none;
+    --accent: #2dff9a; --accent-ink: #000; --accent-edge: #2dff9a; --chip-on-bd: #2dff9a; --on-shadow: 0 0 22px rgba(45,255,154,.55);
+    --card-bg: #000; --card-r: 28px; --card-bd: 1px solid #1f1f1f; --card-shadow: none;
+    --cell-bg: #0a0a0a; --cell-hover: #181818; --cell-ink: #ededed; --cell-done: #4a4a4a;
+    --cell-bd: #2a2a2a; --cell-bw: 1px; --cell-r: 50%; --cell-shadow: none; --cell-text-shadow: none;
+    --mark: #2dff9a; --mark-w: 3px; --mark-r: 2px; --mark-glow: 0 0 8px rgba(45,255,154,.7); --strike-glow: drop-shadow(0 0 5px #2dff9a);
+    --btn-bg: #2dff9a; --btn-ink: #000; --btn-edge: #12a860; --btn-bd: 0; --btn-r: 999px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { min-height: 100%; }
+  body {
+    min-height: 100vh;
+    background: var(--bg); color: var(--text); font-family: var(--font);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 22px; padding: 20px;
+  }
+
+  /* Theme + sound bar */
+  .bar { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; max-width: 560px; }
+  .bar button {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 7px 13px; border-radius: var(--btn-r); cursor: pointer;
+    background: transparent; color: var(--text); border: 2px solid var(--muted);
+    font-family: var(--font); font-size: .88rem; font-weight: 700;
+    -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
+    transition: background .15s, color .15s, border-color .15s;
+  }
+  .bar button:hover { border-color: var(--accent); }
+  .bar button[aria-checked="true"], .bar button.sound[aria-pressed="true"] {
+    background: var(--accent); color: var(--accent-ink); border-color: var(--chip-on-bd);
+  }
+  .bar button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .dot { width: 14px; height: 14px; border-radius: 50%; border: 1px solid rgba(0,0,0,.25); flex: none; }
+
+  /* BINGO letter balls */
+  .word { display: flex; gap: clamp(8px, 2.5vw, 16px); }
+  .ball {
+    width: clamp(48px, 13vw, 68px); aspect-ratio: 1; border-radius: var(--ball-r);
+    display: grid; place-items: center;
+    font-size: clamp(24px, 7vw, 36px); font-weight: 800;
+    color: var(--muted); background: var(--ball-bg); border: var(--ball-bd);
+    box-shadow: var(--ball-shadow); -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
+    transition: background .3s, color .3s, transform .3s, box-shadow .3s, border-color .3s;
+  }
+  .ball.on {
+    background: var(--accent); color: var(--accent-ink);
+    border-color: var(--accent-edge);
+    transform: translateY(-6px) scale(1.08);
+    box-shadow: var(--on-shadow);
+  }
+
+  /* Card */
+  .card {
+    position: relative; background: var(--card-bg); border-radius: var(--card-r); border: var(--card-bd);
+    padding: clamp(10px, 2.5vw, 16px);
+    width: min(92vw, 430px); aspect-ratio: 1;
+    box-shadow: var(--card-shadow); -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
+  }
+  .grid {
+    display: grid; grid-template: repeat(5, 1fr) / repeat(5, 1fr);
+    gap: clamp(5px, 1.5vw, 9px); width: 100%; height: 100%;
+  }
+  .cell {
+    position: relative; border: var(--cell-bw) solid var(--cell-bd); border-radius: var(--cell-r);
+    background: var(--cell-bg); color: var(--cell-ink);
+    box-shadow: var(--cell-shadow); text-shadow: var(--cell-text-shadow);
+    font-family: var(--font); font-weight: 700; font-size: clamp(20px, 6vw, 30px);
+    cursor: pointer; transition: background .15s, transform .1s;
+  }
+  .cell:hover:not(.marked) { background: var(--cell-hover); }
+  .cell:active:not(.marked) { transform: scale(.95); }
+  .cell:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .cell.marked { cursor: default; color: var(--cell-done); text-shadow: none; }
+  /* cross */
+  .cell.marked::before, .cell.marked::after {
+    content: ""; position: absolute; left: 50%; top: 50%;
+    width: 82%; height: var(--mark-w); border-radius: var(--mark-r); background: var(--mark);
+    box-shadow: var(--mark-glow);
+    transform: translate(-50%, -50%) rotate(45deg) scaleX(0);
+    animation: draw .22s ease-out forwards;
+  }
+  .cell.marked::after { transform: translate(-50%, -50%) rotate(-45deg) scaleX(0); animation-delay: .08s; }
+  @keyframes draw {
+    to { transform: translate(-50%, -50%) rotate(var(--r)) scaleX(1); }
+  }
+  .cell.marked::before { --r: 45deg; }
+  .cell.marked::after { --r: -45deg; }
+
+  /* strike lines */
+  .strikes { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; padding: inherit; filter: var(--strike-glow); }
+  .strikes line {
+    stroke: var(--mark); stroke-width: .13; stroke-linecap: round; opacity: .9;
+    stroke-dasharray: 6; stroke-dashoffset: 6; animation: strike .5s ease-out forwards;
+  }
+  @keyframes strike { to { stroke-dashoffset: 0; } }
+
+  .status { min-height: 1.5em; font-size: 1.05rem; color: var(--sub); text-align: center; }
+  .status.win { color: var(--win); font-weight: 800; font-size: 1.3rem; }
+
+  button.refresh {
+    background: var(--btn-bg); color: var(--btn-ink); border: var(--btn-bd); border-radius: var(--btn-r);
+    -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
+    padding: 12px 28px; font-family: var(--font); font-weight: 800; font-size: 1rem; cursor: pointer;
+    box-shadow: 0 6px 0 var(--btn-edge); transition: transform .1s, box-shadow .1s;
+  }
+  button.refresh:hover { filter: brightness(1.06); }
+  button.refresh:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--btn-edge); }
+  button.refresh:focus-visible { outline: 3px solid var(--text); outline-offset: 3px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: .01s !important; transition-duration: .01s !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div class="bar" id="themes" role="radiogroup" aria-label="Board theme"></div>
+  <button class="sound" id="sound" aria-pressed="true">Sound: On</button>
+</div>
+
+<div class="word" id="word" aria-label="Bingo progress"></div>
+
+<div class="card">
+  <div class="grid" id="grid"></div>
+  <svg class="strikes" id="strikes" viewBox="0 0 5 5" preserveAspectRatio="none"></svg>
+</div>
+
+<div class="status" id="status" aria-live="polite"></div>
+<button class="refresh" id="refresh">New game</button>
+
+<script>
+(() => {
+  const LETTERS = ["B", "I", "N", "G", "O"];
+  const NS = "http://www.w3.org/2000/svg";
+
+  /* ---------- Storage (safe on file://) ---------- */
+  const store = {
+    get: k => { try { return localStorage.getItem(k); } catch { return null; } },
+    set: (k, v) => { try { localStorage.setItem(k, v); } catch {} }
+  };
+
+  /* ---------- Themes ---------- */
+  const THEMES = [
+    { id: "neobrutalism", name: "Neo-Brutalism",  c: ["#ffde59", "#ff5db1"] },
+    { id: "monochrome",   name: "Monochrome",     c: ["#f5f5f5", "#111111"] },
+    { id: "glass",        name: "Glassmorphism",  c: ["#7873f5", "#ff6ec4"] },
+    { id: "clay",         name: "Claymorphism",   c: ["#e4dcff", "#ff8fb1"] },
+    { id: "oled",         name: "OLED Aesthetic", c: ["#000000", "#2dff9a"] }
+  ];
+  let theme = THEMES.some(t => t.id === store.get("bingoTheme")) ? store.get("bingoTheme") : THEMES[0].id;
+
+  const themesEl = document.getElementById("themes");
+  THEMES.forEach(t => {
+    const b = document.createElement("button");
+    b.setAttribute("role", "radio");
+    b.dataset.theme = t.id;
+    b.innerHTML = `<span class="dot" style="background:linear-gradient(135deg,${t.c[0]} 50%,${t.c[1]} 50%)"></span>${t.name}`;
+    b.addEventListener("click", () => { setTheme(t.id); sfx("tap"); });
+    themesEl.appendChild(b);
+  });
+
+  function setTheme(id) {
+    theme = id;
+    document.documentElement.dataset.theme = id;
+    [...themesEl.children].forEach(b => b.setAttribute("aria-checked", b.dataset.theme === id));
+    store.set("bingoTheme", id);
+  }
+
+  /* ---------- Sound (synthesized with Web Audio, no files) ---------- */
+  let ctx = null;
+  let muted = store.get("bingoMuted") === "1";
+
+  function audio() {
+    if (!ctx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      ctx = new AC();
+    }
+    if (ctx.state === "suspended") ctx.resume();
+    return ctx;
+  }
+  function tone(freq, dur, type = "sine", vol = .2, delay = 0, slideTo) {
+    if (muted) return;
+    const c = audio(); if (!c) return;
+    const t = c.currentTime + delay;
+    const o = c.createOscillator(), g = c.createGain();
+    o.type = type;
+    o.frequency.setValueAtTime(freq, t);
+    if (slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, t + dur);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol, t + .01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g).connect(c.destination);
+    o.start(t); o.stop(t + dur + .03);
+  }
+  function noise(dur, vol, freq) {
+    if (muted) return;
+    const c = audio(); if (!c) return;
+    const n = Math.floor(c.sampleRate * dur);
+    const buf = c.createBuffer(1, n, c.sampleRate), d = buf.getChannelData(0);
+    for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n);
+    const s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain();
+    s.buffer = buf; f.type = "bandpass"; f.frequency.value = freq; g.gain.value = vol;
+    s.connect(f).connect(g).connect(c.destination);
+    s.start();
+  }
+
+  // Each theme has its own touch sound + chime notes
+  const SND = {
+    neobrutalism: { wave: "square",   scale: [392, 494, 587, 784],     tap: () => { tone(180, .09, "square", .16, 0, 70); noise(.03, .35, 900); } },   // chunky clack
+    monochrome:   { wave: "sine",     scale: [440, 523, 659, 784],     tap: () => { noise(.025, .45, 3000); tone(900, .03, "sine", .05); } },        // mechanical click
+    glass:        { wave: "sine",     scale: [784, 988, 1175, 1568],   tap: () => { tone(1568, .35, "sine", .15); tone(2349, .25, "sine", .06); } },   // glass ting
+    clay:         { wave: "triangle", scale: [523, 659, 784, 1047],    tap: () => { tone(520, .14, "sine", .3, 0, 240); tone(260, .12, "triangle", .12); } }, // soft squish
+    oled:         { wave: "sine",     scale: [587, 740, 880, 1175],    tap: () => tone(1800, .045, "sine", .16, 0, 1200) }                              // crisp tick
+  };
+  function sfx(kind) {
+    const s = SND[theme];
+    if (kind === "tap") s.tap();
+    else if (kind === "line") s.scale.slice(0, 3).forEach((f, i) => tone(f, .25, s.wave, .2, i * .09));
+    else if (kind === "win") s.scale.concat([s.scale[s.scale.length - 1] * 1.5]).forEach((f, i) => tone(f, .4, s.wave, .22, i * .11));
+  }
+
+  const soundBtn = document.getElementById("sound");
+  function renderSoundBtn() {
+    soundBtn.setAttribute("aria-pressed", !muted);
+    soundBtn.textContent = muted ? "Sound: Off" : "Sound: On";
+  }
+  soundBtn.addEventListener("click", () => {
+    muted = !muted; store.set("bingoMuted", muted ? "1" : "0");
+    renderSoundBtn(); sfx("tap");
+  });
+
+  /* ---------- Game ---------- */
+  // All 12 possible lines (5 rows, 5 columns, 2 diagonals) as cell indexes + SVG coordinates
+  const LINES = [];
+  for (let r = 0; r < 5; r++)
+    LINES.push({ cells: [0,1,2,3,4].map(c => r*5 + c), p: [0.2, r+.5, 4.8, r+.5] });
+  for (let c = 0; c < 5; c++)
+    LINES.push({ cells: [0,1,2,3,4].map(r => r*5 + c), p: [c+.5, 0.2, c+.5, 4.8] });
+  LINES.push({ cells: [0,6,12,18,24],  p: [0.2, 0.2, 4.8, 4.8] });
+  LINES.push({ cells: [4,8,12,16,20],  p: [4.8, 0.2, 0.2, 4.8] });
+
+  const gridEl = document.getElementById("grid");
+  const strikesEl = document.getElementById("strikes");
+  const wordEl = document.getElementById("word");
+  const statusEl = document.getElementById("status");
+
+  let marked, done, finished;
+
+  function shuffle(a) {
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function newGame() {
+    marked = new Set();
+    done = new Set();
+    finished = false;
+    strikesEl.innerHTML = "";
+    statusEl.textContent = "Tap a number to cross it out.";
+    statusEl.className = "status";
+
+    wordEl.innerHTML = LETTERS.map(l => `<div class="ball">${l}</div>`).join("");
+
+    const nums = shuffle(Array.from({ length: 25 }, (_, i) => i + 1));
+    gridEl.innerHTML = "";
+    nums.forEach((n, i) => {
+      const b = document.createElement("button");
+      b.className = "cell";
+      b.textContent = n;
+      b.setAttribute("aria-label", "Number " + n);
+      b.addEventListener("click", () => mark(i, b));
+      gridEl.appendChild(b);
+    });
+  }
+
+  function mark(i, el) {
+    if (marked.has(i) || finished) return;
+    marked.add(i);
+    el.classList.add("marked");
+    el.setAttribute("aria-pressed", "true");
+    sfx("tap");
+    checkLines();
+  }
+
+  function checkLines() {
+    let newLines = 0;
+    LINES.forEach((line, idx) => {
+      if (!done.has(idx) && line.cells.every(c => marked.has(c))) {
+        done.add(idx);
+        newLines++;
+        const el = document.createElementNS(NS, "line");
+        el.setAttribute("x1", line.p[0]); el.setAttribute("y1", line.p[1]);
+        el.setAttribute("x2", line.p[2]); el.setAttribute("y2", line.p[3]);
+        el.setAttribute("pathLength", "6");
+        strikesEl.appendChild(el);
+      }
+    });
+    if (!newLines) return;
+
+    // Light up one letter per completed line, in order: B-I-N-G-O
+    const lit = Math.min(done.size, 5);
+    [...wordEl.children].forEach((b, i) => b.classList.toggle("on", i < lit));
+
+    if (lit >= 5) {
+      finished = true;
+      statusEl.textContent = "BINGO! You completed all five letters.";
+      statusEl.className = "status win";
+      setTimeout(() => sfx("win"), 150);
+    } else {
+      statusEl.textContent = `Line complete! "${LETTERS[lit - 1]}" is lit. ${5 - lit} to go.`;
+      setTimeout(() => sfx("line"), 150);
+    }
+  }
+
+  document.getElementById("refresh").addEventListener("click", () => { newGame(); sfx("tap"); });
+
+  setTheme(theme);
+  renderSoundBtn();
+  newGame();
+})();
+</script>
+</body>
+</html>
