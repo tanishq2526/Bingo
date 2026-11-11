@@ -1,0 +1,1537 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bingo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <style>
+    /* ---------- Theme tokens ---------- */
+    /* Every theme defines every token. Default = Neo-Brutalism */
+    :root,
+    [data-theme="neobrutalism"] {
+      --bg: radial-gradient(rgba(0, 0, 0, .2) 1.5px, transparent 1.6px) 0 0 / 20px 20px, #ffde59;
+      --text: #000;
+      --sub: #000;
+      --muted: #000;
+      --win: #000;
+      --font: "Arial Black", "Helvetica Neue", Arial, sans-serif;
+      --blur: none;
+      --ball-fs: clamp(24px, 7vw, 36px);
+      --cell-fs: clamp(20px, 6vw, 30px);
+      --ball-bg: #fff;
+      --ball-bd: 3px solid #000;
+      --ball-r: 8px;
+      --ball-shadow: 3px 3px 0 #000;
+      --accent: #ff5db1;
+      --accent-ink: #000;
+      --accent-edge: #000;
+      --chip-on-bd: #000;
+      --on-shadow: 5px 5px 0 #000;
+      --card-bg: #5ce1e6;
+      --card-r: 10px;
+      --card-bd: 4px solid #000;
+      --card-shadow: 10px 10px 0 #000;
+      --cell-bg: #fff;
+      --cell-hover: #fff3b0;
+      --cell-ink: #000;
+      --cell-done: rgba(0, 0, 0, .3);
+      --cell-bd: #000;
+      --cell-bw: 3px;
+      --cell-r: 6px;
+      --cell-shadow: 3px 3px 0 #000;
+      --cell-text-shadow: none;
+      --mark: #ff2e63;
+      --mark-w: 7px;
+      --mark-r: 0;
+      --mark-glow: none;
+      --strike-glow: none;
+      --btn-bg: #ff5db1;
+      --btn-ink: #000;
+      --btn-edge: #000;
+      --btn-bd: 3px solid #000;
+      --btn-r: 8px;
+    }
+
+    [data-theme="monochrome"] {
+      --bg: linear-gradient(160deg, #f5f5f5 0%, #d9d9d9 100%);
+      --text: #111;
+      --sub: #444;
+      --muted: #8c8c8c;
+      --win: #111;
+      --font: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      --blur: none;
+      --ball-bg: transparent;
+      --ball-bd: 1.5px solid #111;
+      --ball-r: 0;
+      --ball-shadow: none;
+      --accent: #111;
+      --accent-ink: #fff;
+      --accent-edge: #111;
+      --chip-on-bd: #111;
+      --on-shadow: none;
+      --card-bg: #fafafa;
+      --card-r: 0;
+      --card-bd: 1.5px solid #111;
+      --card-shadow: 0 24px 40px rgba(0, 0, 0, .14);
+      --cell-bg: #fff;
+      --cell-hover: #e6e6e6;
+      --cell-ink: #111;
+      --cell-done: rgba(17, 17, 17, .3);
+      --cell-bd: #111;
+      --cell-bw: 1.5px;
+      --cell-r: 0;
+      --cell-shadow: none;
+      --cell-text-shadow: none;
+      --mark: #111;
+      --mark-w: 4px;
+      --mark-r: 0;
+      --mark-glow: none;
+      --strike-glow: none;
+      --btn-bg: #111;
+      --btn-ink: #fff;
+      --btn-edge: #7a7a7a;
+      --btn-bd: 0;
+      --btn-r: 0;
+    }
+
+    [data-theme="glass"] {
+      --bg: radial-gradient(circle at 15% 20%, #ff6ec4 0, transparent 40%),
+        radial-gradient(circle at 85% 25%, #7873f5 0, transparent 45%),
+        radial-gradient(circle at 50% 95%, #19c6a3 0, transparent 45%), #1b1442;
+      --text: #fff;
+      --sub: rgba(255, 255, 255, .82);
+      --muted: rgba(255, 255, 255, .55);
+      --win: #ffe066;
+      --font: "Segoe UI", "SF Pro Display", "Helvetica Neue", system-ui, sans-serif;
+      --blur: blur(14px) saturate(140%);
+      --ball-bg: rgba(255, 255, 255, .12);
+      --ball-bd: 1px solid rgba(255, 255, 255, .4);
+      --ball-r: 50%;
+      --ball-shadow: 0 6px 18px rgba(20, 10, 60, .25);
+      --accent: #fff;
+      --accent-ink: #3b2a7a;
+      --accent-edge: #fff;
+      --chip-on-bd: #fff;
+      --on-shadow: 0 8px 28px rgba(255, 255, 255, .45);
+      --card-bg: rgba(255, 255, 255, .14);
+      --card-r: 28px;
+      --card-bd: 1px solid rgba(255, 255, 255, .4);
+      --card-shadow: 0 20px 50px rgba(20, 10, 60, .4);
+      --cell-bg: rgba(255, 255, 255, .16);
+      --cell-hover: rgba(255, 255, 255, .3);
+      --cell-ink: #fff;
+      --cell-done: rgba(255, 255, 255, .45);
+      --cell-bd: rgba(255, 255, 255, .45);
+      --cell-bw: 1px;
+      --cell-r: 16px;
+      --cell-shadow: inset 0 1px 0 rgba(255, 255, 255, .5), 0 4px 14px rgba(0, 0, 0, .15);
+      --cell-text-shadow: 0 1px 2px rgba(0, 0, 0, .25);
+      --mark: #ffe066;
+      --mark-w: 5px;
+      --mark-r: 3px;
+      --mark-glow: 0 0 10px rgba(255, 224, 102, .7);
+      --strike-glow: drop-shadow(0 0 5px rgba(255, 224, 102, .8));
+      --btn-bg: rgba(255, 255, 255, .24);
+      --btn-ink: #fff;
+      --btn-edge: rgba(255, 255, 255, .25);
+      --btn-bd: 1px solid rgba(255, 255, 255, .55);
+      --btn-r: 999px;
+    }
+
+    [data-theme="clay"] {
+      --bg: linear-gradient(160deg, #e4dcff 0%, #ffe3ee 100%);
+      --text: #4a3680;
+      --sub: #6a58a0;
+      --muted: #9d8fcc;
+      --win: #d9456f;
+      --font: "Nunito", "Quicksand", "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+      --blur: none;
+      --ball-bg: #efe8ff;
+      --ball-bd: none;
+      --ball-r: 50%;
+      --ball-shadow: inset -4px -4px 8px rgba(120, 100, 180, .2), inset 4px 4px 8px #fff, 4px 6px 10px rgba(100, 80, 160, .25);
+      --accent: #ff8fb1;
+      --accent-ink: #fff;
+      --accent-edge: #ffd0df;
+      --chip-on-bd: #ff8fb1;
+      --on-shadow: inset -4px -4px 8px rgba(0, 0, 0, .15), inset 4px 4px 8px rgba(255, 255, 255, .5), 5px 8px 16px rgba(255, 100, 150, .5);
+      --card-bg: #f1ebff;
+      --card-r: 42px;
+      --card-bd: none;
+      --card-shadow: inset -10px -10px 20px rgba(120, 100, 180, .18), inset 10px 10px 20px rgba(255, 255, 255, .95), 14px 18px 34px rgba(100, 80, 160, .35);
+      --cell-bg: #fff7fb;
+      --cell-hover: #ffe9f3;
+      --cell-ink: #5b3f9a;
+      --cell-done: rgba(91, 63, 154, .35);
+      --cell-bd: transparent;
+      --cell-bw: 0px;
+      --cell-r: 32%;
+      --cell-shadow: inset -5px -5px 10px rgba(180, 120, 170, .18), inset 5px 5px 10px rgba(255, 255, 255, .95), 5px 7px 12px rgba(100, 80, 160, .28);
+      --cell-text-shadow: none;
+      --mark: #ff7a59;
+      --mark-w: 8px;
+      --mark-r: 8px;
+      --mark-glow: 0 3px 4px rgba(150, 60, 30, .3);
+      --strike-glow: drop-shadow(0 3px 3px rgba(150, 60, 30, .3));
+      --btn-bg: #ff8fb1;
+      --btn-ink: #fff;
+      --btn-edge: #d9638a;
+      --btn-bd: 0;
+      --btn-r: 999px;
+    }
+
+    [data-theme="minecraft"] {
+      /* grass strip on top of a dirt checker */
+      --bg: linear-gradient(#6fbf4a 0 44px, #4d8a2f 44px 52px, transparent 52px),
+        repeating-conic-gradient(#8a5a33 0 25%, #7a4e2c 0 50%) 0 0 / 48px 48px;
+      --text: #fff;
+      --sub: #ececec;
+      --muted: #3f3f3f;
+      --win: #ffe44d;
+      --font: "VT323", "Courier New", monospace;
+      --blur: none;
+      --ball-fs: clamp(28px, 8vw, 42px);
+      --cell-fs: clamp(28px, 8vw, 40px);
+      --ball-bg: #8b8b8b;
+      --ball-bd: none;
+      --ball-r: 0;
+      --ball-shadow: inset 4px 4px 0 #373737, inset -4px -4px 0 #fff;
+      --accent: #5fa84a;
+      --accent-ink: #fff;
+      --accent-edge: #5fa84a;
+      --chip-on-bd: #000;
+      --on-shadow: inset 4px 4px 0 #9bdc82, inset -4px -4px 0 #2e5f22, 0 6px 0 rgba(0, 0, 0, .35);
+      --card-bg: #c6c6c6;
+      --card-r: 0;
+      --card-bd: 4px solid #000;
+      --card-shadow: inset 4px 4px 0 #fff, inset -4px -4px 0 #555, 8px 8px 0 rgba(0, 0, 0, .35);
+      --cell-bg: #8b8b8b;
+      --cell-hover: #a5a5a5;
+      --cell-ink: #fff;
+      --cell-done: transparent;
+      --cell-bd: transparent;
+      --cell-bw: 0px;
+      --cell-r: 0;
+      --cell-shadow: inset 4px 4px 0 #373737, inset -4px -4px 0 #fff;
+      --cell-text-shadow: 2px 2px 0 #3f3f3f;
+      --mark: #e03a2f;
+      --mark-w: 6px;
+      --mark-r: 0;
+      --mark-glow: none;
+      --strike-glow: none;
+      --btn-bg: #5fa84a;
+      --btn-ink: #fff;
+      --btn-edge: #2e5f22;
+      --btn-bd: 3px solid #000;
+      --btn-r: 0;
+      /* creeper face (6x6 pixels) used instead of the cross */
+      --creeper: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 6 6' shape-rendering='crispEdges'%3E%3Crect width='6' height='6' fill='%235fa84a'/%3E%3Cg fill='%23000'%3E%3Crect x='0' y='0' width='2' height='2'/%3E%3Crect x='4' y='0' width='2' height='2'/%3E%3Crect x='2' y='2' width='2' height='1'/%3E%3Crect x='1' y='3' width='4' height='2'/%3E%3Crect x='1' y='5' width='1' height='1'/%3E%3Crect x='4' y='5' width='1' height='1'/%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      min-height: 100%;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 22px;
+      padding: 20px;
+    }
+
+    /* Theme + sound bar */
+    .bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      max-width: 560px;
+    }
+
+    .bar button {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 13px;
+      border-radius: var(--btn-r);
+      cursor: pointer;
+      background: transparent;
+      color: var(--text);
+      border: 2px solid var(--muted);
+      font-family: var(--font);
+      font-size: .88rem;
+      font-weight: 700;
+      -webkit-backdrop-filter: var(--blur);
+      backdrop-filter: var(--blur);
+      transition: background .15s, color .15s, border-color .15s;
+    }
+
+    .bar button:hover {
+      border-color: var(--accent);
+    }
+
+    .bar button[aria-checked="true"],
+    .bar button.sound[aria-pressed="true"] {
+      background: var(--accent);
+      color: var(--accent-ink);
+      border-color: var(--chip-on-bd);
+    }
+
+    .bar button:focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 1px solid rgba(0, 0, 0, .25);
+      flex: none;
+    }
+
+    /* BINGO letter balls */
+    .word {
+      display: flex;
+      gap: clamp(8px, 2.5vw, 16px);
+    }
+
+    .ball {
+      width: clamp(48px, 13vw, 68px);
+      aspect-ratio: 1;
+      border-radius: var(--ball-r);
+      display: grid;
+      place-items: center;
+      font-size: var(--ball-fs);
+      font-weight: 800;
+      color: var(--muted);
+      background: var(--ball-bg);
+      border: var(--ball-bd);
+      box-shadow: var(--ball-shadow);
+      -webkit-backdrop-filter: var(--blur);
+      backdrop-filter: var(--blur);
+      transition: background .3s, color .3s, transform .3s, box-shadow .3s, border-color .3s;
+    }
+
+    .ball.on {
+      background: var(--accent);
+      color: var(--accent-ink);
+      border-color: var(--accent-edge);
+      transform: translateY(-6px) scale(1.08);
+      box-shadow: var(--on-shadow);
+    }
+
+    /* Card */
+    .card {
+      position: relative;
+      background: var(--card-bg);
+      border-radius: var(--card-r);
+      border: var(--card-bd);
+      padding: clamp(10px, 2.5vw, 16px);
+      width: min(92vw, 430px);
+      aspect-ratio: 1;
+      box-shadow: var(--card-shadow);
+      -webkit-backdrop-filter: var(--blur);
+      backdrop-filter: var(--blur);
+    }
+
+    .grid {
+      display: grid;
+      grid-template: repeat(5, 1fr) / repeat(5, 1fr);
+      gap: clamp(5px, 1.5vw, 9px);
+      width: 100%;
+      height: 100%;
+    }
+
+    .cell {
+      position: relative;
+      border: var(--cell-bw) solid var(--cell-bd);
+      border-radius: var(--cell-r);
+      background: var(--cell-bg);
+      color: var(--cell-ink);
+      box-shadow: var(--cell-shadow);
+      text-shadow: var(--cell-text-shadow);
+      font-family: var(--font);
+      font-weight: 700;
+      font-size: var(--cell-fs);
+      cursor: pointer;
+      transition: background .15s, transform .1s;
+    }
+
+    .cell:hover:not(.marked) {
+      background: var(--cell-hover);
+    }
+
+    .cell:active:not(.marked) {
+      transform: scale(.95);
+    }
+
+    .cell:focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .cell.marked {
+      cursor: default;
+      color: var(--cell-done);
+      text-shadow: none;
+    }
+
+    /* cross */
+    .cell.marked::before,
+    .cell.marked::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 82%;
+      height: var(--mark-w);
+      border-radius: var(--mark-r);
+      background: var(--mark);
+      box-shadow: var(--mark-glow);
+      transform: translate(-50%, -50%) rotate(45deg) scaleX(0);
+      animation: draw .22s ease-out forwards;
+    }
+
+    .cell.marked::after {
+      transform: translate(-50%, -50%) rotate(-45deg) scaleX(0);
+      animation-delay: .08s;
+    }
+
+    @keyframes draw {
+      to {
+        transform: translate(-50%, -50%) rotate(var(--r)) scaleX(1);
+      }
+    }
+
+    .cell.marked::before {
+      --r: 45deg;
+    }
+
+    .cell.marked::after {
+      --r: -45deg;
+    }
+
+    /* strike lines */
+    .strikes {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      padding: inherit;
+      filter: var(--strike-glow);
+    }
+
+    .strikes line {
+      stroke: var(--mark);
+      stroke-width: .13;
+      stroke-linecap: round;
+      opacity: .9;
+      stroke-dasharray: 6;
+      stroke-dashoffset: 6;
+      animation: strike .5s ease-out forwards;
+    }
+
+    @keyframes strike {
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    .status {
+      min-height: 1.5em;
+      font-size: 1.05rem;
+      color: var(--sub);
+      text-align: center;
+    }
+
+    .status.win {
+      color: var(--win);
+      font-weight: 800;
+      font-size: 1.3rem;
+    }
+
+    button.refresh {
+      background: var(--btn-bg);
+      color: var(--btn-ink);
+      border: var(--btn-bd);
+      border-radius: var(--btn-r);
+      -webkit-backdrop-filter: var(--blur);
+      backdrop-filter: var(--blur);
+      padding: 12px 28px;
+      font-family: var(--font);
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 6px 0 var(--btn-edge);
+      transition: transform .1s, box-shadow .1s;
+    }
+
+    button.refresh:hover {
+      filter: brightness(1.06);
+    }
+
+    button.refresh:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 var(--btn-edge);
+    }
+
+    button.refresh:focus-visible {
+      outline: 3px solid var(--text);
+      outline-offset: 3px;
+    }
+
+    /* ---------- Minecraft extras ---------- */
+    [data-theme="minecraft"] body {
+      text-shadow: 2px 2px 0 #3f3f3f;
+    }
+
+    [data-theme="minecraft"] .status {
+      font-size: 1.5rem;
+    }
+
+    [data-theme="minecraft"] .bar button {
+      background: #8b8b8b;
+      color: #fff;
+      border: 3px solid #000;
+      border-radius: 0;
+      font-size: 1.2rem;
+      box-shadow: inset 3px 3px 0 #bdbdbd, inset -3px -3px 0 #555;
+      text-shadow: 2px 2px 0 #3f3f3f;
+    }
+
+    [data-theme="minecraft"] .bar button:hover {
+      background: #a0a0a0;
+    }
+
+    [data-theme="minecraft"] .bar button[aria-checked="true"],
+    [data-theme="minecraft"] .bar button.sound[aria-pressed="true"] {
+      background: #5fa84a;
+      box-shadow: inset 3px 3px 0 #9bdc82, inset -3px -3px 0 #2e5f22;
+    }
+
+    [data-theme="minecraft"] button.refresh {
+      font-size: 1.4rem;
+      text-shadow: 2px 2px 0 #2e5f22;
+      box-shadow: inset 3px 3px 0 #9bdc82, inset -3px -3px 0 #2e5f22, 0 6px 0 #000;
+    }
+
+    [data-theme="minecraft"] button.refresh:active {
+      box-shadow: inset 3px 3px 0 #2e5f22, inset -3px -3px 0 #9bdc82, 0 2px 0 #000;
+    }
+
+    [data-theme="minecraft"] .cell.marked {
+      background-image: var(--creeper);
+      background-size: 100% 100%;
+      image-rendering: pixelated;
+      color: transparent;
+      text-shadow: none;
+      animation: blockpop .25s steps(4) both;
+    }
+
+    [data-theme="minecraft"] .cell.marked::before,
+    [data-theme="minecraft"] .cell.marked::after {
+      display: none;
+    }
+
+    [data-theme="minecraft"] .strikes line {
+      stroke-linecap: square;
+    }
+
+    @keyframes blockpop {
+      from {
+        transform: scale(.4);
+      }
+
+      to {
+        transform: scale(1);
+      }
+    }
+
+    /* ---------- Screens ---------- */
+    body {
+      overflow-x: hidden;
+    }
+
+    .screen {
+      display: none;
+      width: 100%;
+      flex-direction: column;
+      align-items: center;
+      gap: 22px;
+    }
+
+    .screen.active {
+      display: flex;
+    }
+
+    /* Home */
+    .hero .ball {
+      width: clamp(54px, 15vw, 84px);
+      font-size: clamp(30px, 9vw, 48px);
+      animation: hop 1.6s ease-in-out infinite;
+      animation-delay: calc(var(--i) * .12s);
+    }
+
+    @keyframes hop {
+
+      0%,
+      55%,
+      100% {
+        transform: translateY(0);
+      }
+
+      25% {
+        transform: translateY(-16px);
+      }
+    }
+
+    .tag {
+      font-size: 1.1rem;
+      text-align: center;
+      font-weight: 700;
+    }
+
+    .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    button.refresh.big {
+      width: min(320px, 86vw);
+      font-size: 1.25rem;
+      padding: 16px 28px;
+    }
+
+    button.refresh.ghost {
+      background: #fff;
+    }
+
+    button.refresh.shake {
+      animation: shake .4s;
+    }
+
+    @keyframes shake {
+
+      20%,
+      60% {
+        transform: translateX(-7px);
+      }
+
+      40%,
+      80% {
+        transform: translateX(7px);
+      }
+    }
+
+    .toast {
+      min-height: 48px;
+      padding: 10px 20px;
+      background: #fff;
+      color: #000;
+      border: 3px solid #000;
+      border-radius: 8px;
+      box-shadow: 4px 4px 0 #000;
+      font-weight: 800;
+      font-size: 1.1rem;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity .2s, transform .2s;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* Theme picker */
+    .ptitle {
+      font-size: 1.8rem;
+      text-align: center;
+    }
+
+    .slider {
+      position: relative;
+      width: 100vw;
+      height: 350px;
+      overflow: hidden;
+      touch-action: pan-y;
+      user-select: none;
+    }
+
+    .track {
+      position: absolute;
+      inset: 0;
+    }
+
+    .slide {
+      position: absolute;
+      left: 50%;
+      top: 14px;
+      width: min(64vw, 260px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      transition: transform .35s ease, opacity .35s ease;
+    }
+
+    .stage {
+      width: 100%;
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background: var(--bg);
+      border: 3px solid #000;
+      border-radius: 26px;
+      box-shadow: 6px 6px 0 #000;
+    }
+
+    .mini {
+      width: 72%;
+      aspect-ratio: 1;
+      padding: 8px;
+      background: var(--card-bg);
+      border: var(--card-bd);
+      border-radius: var(--card-r);
+      box-shadow: var(--card-shadow);
+      -webkit-backdrop-filter: var(--blur);
+      backdrop-filter: var(--blur);
+    }
+
+    .grid3 {
+      display: grid;
+      grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+      gap: 5px;
+      width: 100%;
+      height: 100%;
+    }
+
+    .mini .cell {
+      font-size: calc(var(--cell-fs) * .62);
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .sname {
+      font-size: 1.7rem;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .dots {
+      display: flex;
+      gap: 10px;
+    }
+
+    .dots button {
+      width: 14px;
+      height: 14px;
+      padding: 0;
+      border-radius: 50%;
+      border: 3px solid #000;
+      background: #fff;
+      cursor: pointer;
+      transition: transform .2s, background .2s;
+    }
+
+    .dots button[aria-current="true"] {
+      background: #ff5db1;
+      transform: scale(1.3);
+    }
+
+    .nav {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    /* ---------- Online: bot / LAN ---------- */
+    [hidden] {
+      display: none !important;
+    }
+
+    button.refresh:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+    }
+
+    .opt {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .cap {
+      font-size: .95rem;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .tinput {
+      width: min(320px, 86vw);
+      padding: 12px 16px;
+      border-radius: min(var(--btn-r), 14px);
+      border: 2px solid var(--cell-bd);
+      background: var(--cell-bg);
+      color: var(--cell-ink);
+      font-family: var(--font);
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .tinput::placeholder {
+      color: var(--cell-ink);
+      opacity: .5;
+    }
+
+    .tinput:focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .err {
+      min-height: 1.3em;
+      text-align: center;
+      font-weight: 700;
+      color: var(--win);
+    }
+
+    .panel {
+      width: min(92vw, 430px);
+      padding: 12px 16px;
+      background: var(--ball-bg);
+      border: var(--ball-bd);
+      border-radius: min(var(--card-r), 18px);
+      box-shadow: var(--ball-shadow);
+      -webkit-backdrop-filter: var(--blur);
+      backdrop-filter: var(--blur);
+    }
+
+    .plabel {
+      font-size: .95rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .roster {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .roster li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .roster li.off {
+      opacity: .45;
+    }
+
+    .roster li.turn .nm::before {
+      content: "\25B6  ";
+    }
+
+    .tg {
+      font-size: .8rem;
+      font-weight: 700;
+      opacity: .7;
+      margin-left: 6px;
+    }
+
+    .pl {
+      display: flex;
+      gap: 3px;
+    }
+
+    .pl span {
+      width: 22px;
+      height: 22px;
+      display: grid;
+      place-items: center;
+      font-size: .72rem;
+      font-weight: 800;
+      border-radius: 50%;
+      background: rgba(128, 128, 128, .28);
+    }
+
+    .pl span.on {
+      background: var(--accent);
+      color: var(--accent-ink);
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .chips span {
+      min-width: 30px;
+      text-align: center;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(128, 128, 128, .28);
+      font-weight: 800;
+    }
+
+    .chips span.new {
+      background: var(--accent);
+      color: var(--accent-ink);
+    }
+
+    .banner {
+      text-align: center;
+      font-size: 1.15rem;
+      font-weight: 800;
+      min-height: 1.4em;
+    }
+
+    .banner.mine,
+    .banner.win {
+      color: var(--win);
+    }
+
+    .banner.win {
+      font-size: 1.4rem;
+    }
+
+    .lastcall {
+      font-size: .95rem;
+      text-align: center;
+      min-height: 1.3em;
+    }
+
+    #match .cell {
+      cursor: default;
+    }
+
+    #match .cell:not(.playable):hover {
+      background-color: var(--cell-bg);
+    }
+
+    #match .cell:not(.playable):active {
+      transform: none;
+    }
+
+    #match .cell.playable {
+      cursor: pointer;
+      outline: 3px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    #match .cell.latest {
+      outline: 3px dotted var(--mark);
+      outline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: .01s !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01s !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Home -->
+  <section class="screen active" id="home">
+    <div class="word hero" aria-label="Bingo">
+      <div class="ball on" style="--i:0">B</div>
+      <div class="ball on" style="--i:1">I</div>
+      <div class="ball on" style="--i:2">N</div>
+      <div class="ball on" style="--i:3">G</div>
+      <div class="ball on" style="--i:4">O</div>
+    </div>
+    <p class="tag">Mark your numbers. Light up B-I-N-G-O.</p>
+    <div class="menu">
+      <button class="refresh big ghost" id="goOnline">Online match</button>
+      <button class="refresh big" id="offline">Offline match</button>
+    </div>
+  </section>
+
+  <!-- Online menu -->
+  <section class="screen" id="online">
+    <h2 class="ptitle">Online match</h2>
+    <div class="menu">
+      <div class="opt"><button class="refresh big" id="bot">Bot player</button><span class="cap">Play against the
+          computer</span></div>
+      <div class="opt"><button class="refresh big ghost" id="lan">LAN room</button><span class="cap">Play with friends
+          on the same Wi-Fi</span></div>
+    </div>
+    <div class="nav"><button class="refresh ghost" id="oBack">Back</button></div>
+  </section>
+
+  <!-- LAN: join -->
+  <section class="screen" id="lanjoin">
+    <h2 class="ptitle">LAN room</h2>
+    <p class="tag" id="jHint"></p>
+    <input class="tinput" id="jName" maxlength="16" placeholder="Your name" autocomplete="off">
+    <input class="tinput" id="jHost" placeholder="Server address, e.g. 192.168.1.5:3000" autocomplete="off" hidden>
+    <div class="err" id="jErr"></div>
+    <div class="bar"><button id="jBack">Back</button></div>
+    <button class="refresh" id="jGo">Join room</button>
+  </section>
+
+  <!-- LAN: lobby -->
+  <section class="screen" id="lobby">
+    <h2 class="ptitle">Waiting room</h2>
+    <div class="panel">
+      <div class="plabel">Players</div>
+      <ul class="roster" id="lRoster"></ul>
+    </div>
+    <p class="tag" id="lHint"></p>
+    <div class="err" id="lErr"></div>
+    <button class="refresh" id="lStart">Start game</button>
+    <div class="bar"><button id="lLeave">Leave</button></div>
+  </section>
+
+  <!-- Match (bot or LAN) -->
+  <section class="screen" id="match">
+    <div class="bar"><button id="mLeave">Leave</button><button class="sound" aria-pressed="true">Sound: On</button>
+    </div>
+    <div class="word" id="mWord" aria-label="Your Bingo progress"></div>
+    <div class="banner" id="mBanner"></div>
+    <div class="lastcall" id="mLast"></div>
+    <div class="card">
+      <div class="grid" id="mGrid"></div>
+      <svg class="strikes" id="mStrikes" viewBox="0 0 5 5" preserveAspectRatio="none"></svg>
+    </div>
+    <button class="refresh" id="mAgain" hidden>Play again</button>
+    <div class="panel">
+      <div class="plabel">Players</div>
+      <ul class="roster" id="mRoster"></ul>
+    </div>
+    <div class="panel">
+      <div class="plabel">Numbers called</div>
+      <div class="chips" id="mChips"></div>
+    </div>
+  </section>
+
+  <!-- Theme picker -->
+  <section class="screen" id="picker">
+    <h2 class="ptitle">Choose your theme</h2>
+    <div class="slider" id="slider" role="group" aria-roledescription="carousel" aria-label="Themes">
+      <div class="track" id="track"></div>
+    </div>
+    <div class="dots" id="dots"></div>
+    <div class="nav">
+      <button class="refresh ghost" id="prev">Previous</button>
+      <button class="refresh" id="next">Next</button>
+    </div>
+  </section>
+
+  <!-- Game -->
+  <section class="screen" id="game">
+    <div class="bar">
+      <button id="toHome">Home</button>
+      <button id="toThemes">Themes</button>
+      <button class="sound" aria-pressed="true">Sound: On</button>
+    </div>
+    <div class="word" id="word" aria-label="Bingo progress"></div>
+    <div class="card">
+      <div class="grid" id="grid"></div>
+      <svg class="strikes" id="strikes" viewBox="0 0 5 5" preserveAspectRatio="none"></svg>
+    </div>
+    <div class="status" id="status" aria-live="polite"></div>
+    <button class="refresh" id="refresh">New game</button>
+  </section>
+
+  <script>
+    (() => {
+      const LETTERS = ["B", "I", "N", "G", "O"];
+      const NS = "http://www.w3.org/2000/svg";
+
+      /* ---------- Storage (safe on file://) ---------- */
+      const store = {
+        get: k => { try { return localStorage.getItem(k); } catch { return null; } },
+        set: (k, v) => { try { localStorage.setItem(k, v); } catch { } }
+      };
+
+      /* ---------- Themes ---------- */
+      const THEMES = [
+        { id: "neobrutalism", name: "Neo-Brutalism", c: ["#ffde59", "#ff5db1"] },
+        { id: "monochrome", name: "Monochrome", c: ["#f5f5f5", "#111111"] },
+        { id: "glass", name: "Glassmorphism", c: ["#7873f5", "#ff6ec4"] },
+        { id: "clay", name: "Claymorphism", c: ["#e4dcff", "#ff8fb1"] },
+        { id: "minecraft", name: "Minecraft", c: ["#7a4e2c", "#5fa84a"] }
+      ];
+      let theme = THEMES.some(t => t.id === store.get("bingoTheme")) ? store.get("bingoTheme") : THEMES[0].id;
+
+      function applyTheme(id, save) {
+        theme = id;
+        document.documentElement.dataset.theme = id;
+        if (save) store.set("bingoTheme", id);
+      }
+
+      /* ---------- Sound (synthesized with Web Audio, no files) ---------- */
+      let ctx = null;
+      let muted = store.get("bingoMuted") === "1";
+
+      function audio() {
+        if (!ctx) {
+          const AC = window.AudioContext || window.webkitAudioContext;
+          if (!AC) return null;
+          ctx = new AC();
+        }
+        if (ctx.state === "suspended") ctx.resume();
+        return ctx;
+      }
+      function tone(freq, dur, type = "sine", vol = .2, delay = 0, slideTo) {
+        if (muted) return;
+        const c = audio(); if (!c) return;
+        const t = c.currentTime + delay;
+        const o = c.createOscillator(), g = c.createGain();
+        o.type = type;
+        o.frequency.setValueAtTime(freq, t);
+        if (slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, t + dur);
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(vol, t + .01);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+        o.connect(g).connect(c.destination);
+        o.start(t); o.stop(t + dur + .03);
+      }
+      function noise(dur, vol, freq) {
+        if (muted) return;
+        const c = audio(); if (!c) return;
+        const n = Math.floor(c.sampleRate * dur);
+        const buf = c.createBuffer(1, n, c.sampleRate), d = buf.getChannelData(0);
+        for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n);
+        const s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain();
+        s.buffer = buf; f.type = "bandpass"; f.frequency.value = freq; g.gain.value = vol;
+        s.connect(f).connect(g).connect(c.destination);
+        s.start();
+      }
+
+      // Each theme has its own touch sound + chime notes
+      const SND = {
+        neobrutalism: { wave: "square", scale: [392, 494, 587, 784], tap: () => { tone(180, .09, "square", .16, 0, 70); noise(.03, .35, 900); } },   // chunky clack
+        monochrome: { wave: "sine", scale: [440, 523, 659, 784], tap: () => { noise(.025, .45, 3000); tone(900, .03, "sine", .05); } },        // mechanical click
+        glass: { wave: "sine", scale: [784, 988, 1175, 1568], tap: () => { tone(1568, .35, "sine", .15); tone(2349, .25, "sine", .06); } },   // glass ting
+        clay: { wave: "triangle", scale: [523, 659, 784, 1047], tap: () => { tone(520, .14, "sine", .3, 0, 240); tone(260, .12, "triangle", .12); } }, // soft squish
+        minecraft: { wave: "triangle", scale: [659, 784, 988, 1319], tap: () => { noise(.06, .5, 500); tone(110, .08, "square", .14, 0, 70); } }       // stone block place
+      };
+      function sfx(kind) {
+        const s = SND[theme];
+        if (kind === "tap") s.tap();
+        else if (kind === "line") s.scale.slice(0, 3).forEach((f, i) => tone(f, .25, s.wave, .2, i * .09));
+        else if (kind === "win") s.scale.concat([s.scale[s.scale.length - 1] * 1.5]).forEach((f, i) => tone(f, .4, s.wave, .22, i * .11));
+      }
+
+      const soundBtns = [...document.querySelectorAll(".sound")];
+      function renderSoundBtn() {
+        soundBtns.forEach(b => { b.setAttribute("aria-pressed", !muted); b.textContent = muted ? "Sound: Off" : "Sound: On"; });
+      }
+      soundBtns.forEach(b => b.addEventListener("click", () => {
+        muted = !muted; store.set("bingoMuted", muted ? "1" : "0");
+        renderSoundBtn(); sfx("tap");
+      }));
+
+      /* ---------- Game ---------- */
+      // All 12 possible lines (5 rows, 5 columns, 2 diagonals) as cell indexes + SVG coordinates
+      const LINES = [];
+      for (let r = 0; r < 5; r++)
+        LINES.push({ cells: [0, 1, 2, 3, 4].map(c => r * 5 + c), p: [0.2, r + .5, 4.8, r + .5] });
+      for (let c = 0; c < 5; c++)
+        LINES.push({ cells: [0, 1, 2, 3, 4].map(r => r * 5 + c), p: [c + .5, 0.2, c + .5, 4.8] });
+      LINES.push({ cells: [0, 6, 12, 18, 24], p: [0.2, 0.2, 4.8, 4.8] });
+      LINES.push({ cells: [4, 8, 12, 16, 20], p: [4.8, 0.2, 0.2, 4.8] });
+
+      const gridEl = document.getElementById("grid");
+      const strikesEl = document.getElementById("strikes");
+      const wordEl = document.getElementById("word");
+      const statusEl = document.getElementById("status");
+
+      let marked, done, finished;
+
+      function shuffle(a) {
+        for (let i = a.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+      }
+
+      function newGame() {
+        marked = new Set();
+        done = new Set();
+        finished = false;
+        strikesEl.innerHTML = "";
+        statusEl.textContent = "Tap a number to cross it out.";
+        statusEl.className = "status";
+
+        wordEl.innerHTML = LETTERS.map(l => `<div class="ball">${l}</div>`).join("");
+
+        const nums = shuffle(Array.from({ length: 25 }, (_, i) => i + 1));
+        gridEl.innerHTML = "";
+        nums.forEach((n, i) => {
+          const b = document.createElement("button");
+          b.className = "cell";
+          b.textContent = n;
+          b.setAttribute("aria-label", "Number " + n);
+          b.addEventListener("click", () => mark(i, b));
+          gridEl.appendChild(b);
+        });
+      }
+
+      function mark(i, el) {
+        if (marked.has(i) || finished) return;
+        marked.add(i);
+        el.classList.add("marked");
+        el.setAttribute("aria-pressed", "true");
+        sfx("tap");
+        checkLines();
+      }
+
+      function checkLines() {
+        let newLines = 0;
+        LINES.forEach((line, idx) => {
+          if (!done.has(idx) && line.cells.every(c => marked.has(c))) {
+            done.add(idx);
+            newLines++;
+            const el = document.createElementNS(NS, "line");
+            el.setAttribute("x1", line.p[0]); el.setAttribute("y1", line.p[1]);
+            el.setAttribute("x2", line.p[2]); el.setAttribute("y2", line.p[3]);
+            el.setAttribute("pathLength", "6");
+            strikesEl.appendChild(el);
+          }
+        });
+        if (!newLines) return;
+
+        // Light up one letter per completed line, in order: B-I-N-G-O
+        const lit = Math.min(done.size, 5);
+        [...wordEl.children].forEach((b, i) => b.classList.toggle("on", i < lit));
+
+        if (lit >= 5) {
+          finished = true;
+          statusEl.textContent = "BINGO! You completed all five letters.";
+          statusEl.className = "status win";
+          setTimeout(() => sfx("win"), 150);
+        } else {
+          statusEl.textContent = `Line complete! "${LETTERS[lit - 1]}" is lit. ${5 - lit} to go.`;
+          setTimeout(() => sfx("line"), 150);
+        }
+      }
+
+      document.getElementById("refresh").addEventListener("click", () => { newGame(); sfx("tap"); });
+
+      /* ---------- Flow: Home -> Offline -> Theme picker -> Game ---------- */
+      const $ = id => document.getElementById(id);
+      const SCREENS = ["home", "online", "lanjoin", "lobby", "match", "picker", "game"];
+      const HOME_THEME = "neobrutalism";
+      const show = id => { SCREENS.forEach(s => $(s).classList.toggle("active", s === id)); window.scrollTo(0, 0); };
+      const toMenu = id => { applyTheme(HOME_THEME, false); show(id); };
+
+      let idx = Math.max(0, THEMES.findIndex(t => t.id === theme));
+      const track = $("track"), dots = $("dots"), slider = $("slider"), toast = $("toast");
+      const NUMS = [7, 12, 3, 19, 5, 21, 8, 14, 25];
+
+      THEMES.forEach((t, k) => {
+        const s = document.createElement("div");
+        s.className = "slide"; s.setAttribute("role", "group"); s.setAttribute("aria-label", t.name);
+        s.innerHTML = `<div class="stage" data-theme="${t.id}"><div class="mini"><div class="grid3">` +
+          NUMS.map((n, i) => `<div class="cell${i % 4 === 0 ? " marked" : ""}">${n}</div>`).join("") +
+          `</div></div></div><div class="sname">${t.name}</div>`;
+        track.appendChild(s);
+        const d = document.createElement("button");
+        d.setAttribute("aria-label", "Show " + t.name);
+        d.addEventListener("click", () => go(k));
+        dots.appendChild(d);
+      });
+
+      function go(i, play = true) {
+        idx = Math.max(0, Math.min(THEMES.length - 1, i));
+        theme = THEMES[idx].id;                       // so sliding previews that theme's tap sound
+        [...track.children].forEach((s, k) => {
+          const d = k - idx, a = Math.abs(d);
+          s.style.transform = `translateX(${-50 + d * 92}%) scale(${a === 0 ? 1 : a === 1 ? .74 : .55})`;
+          s.style.opacity = a === 0 ? 1 : a === 1 ? .55 : 0;
+          s.style.pointerEvents = a > 1 ? "none" : "auto";
+          s.style.zIndex = 10 - a;
+        });
+        [...dots.children].forEach((b, k) => b.setAttribute("aria-current", String(k === idx)));
+        if (play) sfx("tap");
+      }
+
+      // swipe / drag, or tap a neighbouring theme
+      let sx = null;
+      slider.addEventListener("pointerdown", e => { sx = e.clientX; });
+      slider.addEventListener("pointercancel", () => { sx = null; });
+      slider.addEventListener("pointerup", e => {
+        if (sx === null) return;
+        const dx = e.clientX - sx; sx = null;
+        if (Math.abs(dx) > 40) return go(idx + (dx < 0 ? 1 : -1));
+        const slide = e.target.closest(".slide");
+        if (slide) { const k = [...track.children].indexOf(slide); if (k !== idx) go(k); }
+      });
+      document.addEventListener("keydown", e => {
+        if (!$("picker").classList.contains("active")) return;
+        if (e.key === "ArrowRight") go(idx + 1);
+        if (e.key === "ArrowLeft") go(idx - 1);
+      });
+
+      // home + online menu
+      $("goOnline").addEventListener("click", () => { sfx("tap"); show("online"); });
+      $("offline").addEventListener("click", () => { sfx("tap"); mode = "offline"; from = "home"; go(idx, false); show("picker"); });
+      $("oBack").addEventListener("click", () => { sfx("tap"); show("home"); });
+      const pickMode = m => { sfx("tap"); mode = m; from = "online"; go(idx, false); show("picker"); };
+      $("bot").addEventListener("click", () => pickMode("bot"));
+      $("lan").addEventListener("click", () => pickMode("lan"));
+
+      // picker: Previous = back, Next = continue with the chosen theme
+      $("prev").addEventListener("click", () => { toMenu(from); sfx("tap"); });
+      $("next").addEventListener("click", () => {
+        applyTheme(THEMES[idx].id, true); sfx("tap");
+        if (mode === "bot") startBot();
+        else if (mode === "lan") openJoin();
+        else { newGame(); show("game"); }
+      });
+
+      // game bar
+      $("toHome").addEventListener("click", () => { toMenu("home"); sfx("tap"); });
+      $("toThemes").addEventListener("click", () => { mode = "offline"; from = "home"; applyTheme(HOME_THEME, false); go(idx, false); show("picker"); });
+
+      /* ---------- Online: Bot + LAN share one turn-based match screen ---------- */
+      let mode = "offline", from = "home", matchMode = null;
+      const shuffled = () => shuffle(Array.from({ length: 25 }, (_, i) => i + 1));
+      const countLines = (board, called) => LINES.filter(l => l.cells.every(i => called.includes(board[i]))).length;
+
+      const mGrid = $("mGrid"), mStrikes = $("mStrikes"), mWord = $("mWord");
+      let mKey = "", mPrevMine = 0, mPrevCalled = 0;
+      const mDrawn = new Set();
+
+      function drawRoster(el, s, progress) {
+        el.innerHTML = "";
+        s.players.forEach(p => {
+          const li = document.createElement("li");
+          li.className = (p.connected ? "" : "off ") + (s.phase === "playing" && s.turn === p.id ? "turn" : "");
+          const nm = document.createElement("span"); nm.className = "nm"; nm.textContent = p.name;
+          const tag = txt => { const x = document.createElement("span"); x.className = "tg"; x.textContent = txt; nm.appendChild(x); };
+          if (p.id === s.you.id) tag("(you)");
+          if (!p.connected) tag("offline");
+          li.appendChild(nm);
+          if (progress) {
+            const m = document.createElement("div"); m.className = "pl";
+            LETTERS.forEach((l, i) => { const x = document.createElement("span"); x.textContent = l; if (i < p.lines) x.className = "on"; m.appendChild(x); });
+            li.appendChild(m);
+          }
+          el.appendChild(li);
+        });
+      }
+
+      function matchPick(n) { if (matchMode === "bot") botApply("you", n); else lanApi("pick", { n }); }
+
+      // s = { phase, you:{id,name,board}, players:[{id,name,connected,lines}], called, last, turn, winners }
+      function renderMatch(s) {
+        const board = s.you.board, called = new Set(s.called);
+        const myTurn = s.phase === "playing" && s.turn === s.you.id;
+        const key = board.join(",");
+        if (key !== mKey) {
+          mKey = key; mDrawn.clear(); mStrikes.innerHTML = ""; mGrid.innerHTML = ""; mPrevMine = 0; mPrevCalled = 0;
+          board.forEach(n => {
+            const b = document.createElement("button");
+            b.className = "cell"; b.textContent = n; b.dataset.n = n; b.setAttribute("aria-label", "Number " + n);
+            b.addEventListener("click", () => { if (b.classList.contains("playable")) matchPick(n); });
+            mGrid.appendChild(b);
+          });
+        }
+        [...mGrid.children].forEach(b => {
+          const n = +b.dataset.n, c = called.has(n);
+          b.classList.toggle("marked", c);
+          b.classList.toggle("playable", myTurn && !c);
+          b.classList.toggle("latest", !!s.last && s.last.n === n);
+        });
+        let mine = 0;
+        LINES.forEach((l, k) => {
+          if (!l.cells.every(i => called.has(board[i]))) return;
+          mine++;
+          if (mDrawn.has(k)) return;
+          mDrawn.add(k);
+          const el = document.createElementNS(NS, "line");
+          ["x1", "y1", "x2", "y2"].forEach((a, j) => el.setAttribute(a, l.p[j]));
+          el.setAttribute("pathLength", "6");
+          mStrikes.appendChild(el);
+        });
+        const lit = Math.min(mine, 5);
+        mWord.innerHTML = LETTERS.map((l, i) => `<div class="ball${i < lit ? " on" : ""}">${l}</div>`).join("");
+
+        if (s.called.length > mPrevCalled) {
+          sfx("tap");
+          if (s.phase === "over" && s.winners.includes(s.you.id)) setTimeout(() => sfx("win"), 150);
+          else if (mine > mPrevMine) setTimeout(() => sfx("line"), 150);
+        }
+        mPrevCalled = s.called.length; mPrevMine = mine;
+
+        const nm = id => (s.players.find(p => p.id === id) || {}).name || "Someone";
+        const ban = $("mBanner"); ban.className = "banner";
+        if (s.phase === "over") {
+          ban.classList.add("win");
+          ban.textContent = s.winners.includes(s.you.id)
+            ? (s.winners.length > 1 ? "BINGO! It's a tie, you win too." : "BINGO! You win!")
+            : s.winners.map(nm).join(" & ") + (s.winners.length > 1 ? " tie with BINGO." : " got BINGO first.");
+        } else if (myTurn) { ban.classList.add("mine"); ban.textContent = "Your turn: pick a number"; }
+        else ban.textContent = "Waiting for " + nm(s.turn) + "…";
+        $("mLast").textContent = s.last ? `${s.last.by} called ${s.last.n}` : "First to light up B-I-N-G-O wins.";
+        $("mAgain").hidden = s.phase !== "over";
+        drawRoster($("mRoster"), s, true);
+        $("mChips").innerHTML = s.called.map((n, i) => `<span class="${i === s.called.length - 1 ? "new" : ""}">${n}</span>`).join("");
+      }
+
+      /* ----- Bot player (runs fully in the browser) ----- */
+      const bot = { s: null, you: null, cpu: null };
+      function botView() {
+        const s = bot.s, lc = b => Math.min(5, countLines(b, s.called));
+        return {
+          phase: s.phase, called: s.called, last: s.last, turn: s.turn, winners: s.winners,
+          you: { id: "you", name: "You", board: bot.you },
+          players: [
+            { id: "you", name: "You", connected: true, lines: lc(bot.you) },
+            { id: "bot", name: "Bot", connected: true, lines: lc(bot.cpu) }
+          ]
+        };
+      }
+      function startBot() {
+        matchMode = "bot"; bot.you = shuffled(); bot.cpu = shuffled();
+        bot.s = { phase: "playing", called: [], last: null, winners: [], turn: Math.random() < .5 ? "you" : "bot" };
+        show("match"); renderMatch(botView()); botTurn();
+      }
+      // greedy: pick the uncalled number that helps the bot's own lines the most
+      function botChoose() {
+        const done = new Set(bot.s.called);
+        let best = [], top = -1;
+        for (let n = 1; n <= 25; n++) {
+          if (done.has(n)) continue;
+          const i = bot.cpu.indexOf(n);
+          const score = LINES.filter(l => l.cells.includes(i))
+            .reduce((a, l) => a + Math.pow(l.cells.filter(c => done.has(bot.cpu[c])).length + 1, 2), 0);
+          if (score > top) { top = score; best = [n]; } else if (score === top) best.push(n);
+        }
+        return best[Math.floor(Math.random() * best.length)];
+      }
+      function botTurn() {
+        const s = bot.s;
+        if (s.phase !== "playing" || s.turn !== "bot") return;
+        setTimeout(() => { if (bot.s === s) botApply("bot", botChoose()); }, 900);
+      }
+      function botApply(who, n) {
+        const s = bot.s;
+        if (!s || s.phase !== "playing" || s.turn !== who || s.called.includes(n)) return;
+        s.called.push(n); s.last = { n, by: who === "you" ? "You" : "Bot" };
+        s.winners = [["you", bot.you], ["bot", bot.cpu]].filter(([, b]) => countLines(b, s.called) >= 5).map(([id]) => id);
+        if (s.winners.length) { s.phase = "over"; s.turn = null; } else s.turn = who === "you" ? "bot" : "you";
+        renderMatch(botView()); botTurn();
+      }
+
+      /* ----- LAN room (needs server.js running on one computer) ----- */
+      const lan = { base: "", me: null, es: null, s: null };
+      const isFile = location.protocol === "file:";
+      const lanApi = (action, data = {}) =>
+        fetch(lan.base + "/api/" + action, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: lan.me, ...data }) })
+          .then(r => r.json().then(j => ({ ok: r.ok, ...j }))).catch(() => ({ ok: false, error: "Can't reach the server." }));
+
+      function openJoin() {
+        $("jErr").textContent = ""; $("jHost").hidden = !isFile;
+        $("jHint").textContent = isFile
+          ? "Enter the address printed by the server (for example 192.168.1.5:3000) and your name."
+          : "Enter your name to join the room on this server.";
+        show("lanjoin");
+      }
+      function lanLeave() {
+        if (lan.es) lan.es.close();
+        lan.es = null; lan.me = null; lan.s = null; matchMode = null; mKey = "";
+        toMenu("online");
+      }
+      function lanConnect() {
+        if (lan.es) lan.es.close();
+        lan.es = new EventSource(lan.base + "/events?id=" + lan.me);
+        lan.es.onmessage = e => {
+          const s = JSON.parse(e.data);
+          if (s.gone) return lanLeave();
+          lan.s = s; lanRender();
+        };
+      }
+      function lanRender() {
+        const s = lan.s; matchMode = "lan";
+        if (s.phase === "lobby") {
+          mKey = "";
+          drawRoster($("lRoster"), s, false);
+          const enough = s.players.filter(p => p.connected).length >= 2;
+          $("lStart").hidden = !s.you.host; $("lStart").disabled = !enough;
+          const where = lan.base || location.origin;
+          const local = !lan.base && ["localhost", "127.0.0.1"].includes(location.hostname);
+          $("lHint").textContent = s.you.host
+            ? (enough ? "Everyone in? Start the game." : "Share this address and wait for at least 1 more player: " + where)
+            + (local ? " (friends can't use localhost, open the Wi-Fi address from the server terminal instead)" : "")
+            : "Waiting for the host to start the game…";
+          show("lobby");
+        } else { show("match"); renderMatch(s); }
+      }
+
+      $("jName").value = store.get("bingoName") || "";
+      $("jHost").value = store.get("bingoHost") || "";
+      $("jGo").addEventListener("click", async () => {
+        const name = $("jName").value.trim(), err = $("jErr");
+        let host = "";
+        if (isFile) {
+          host = $("jHost").value.trim().replace(/\/+$/, "");
+          if (!host) { err.textContent = "Enter the server address shown in the terminal."; return; }
+          store.set("bingoHost", host);
+          if (!/^https?:\/\//.test(host)) host = "http://" + host;
+        }
+        store.set("bingoName", name);
+        lan.base = host;
+        err.textContent = "Connecting…";
+        const r = await lanApi("join", { name, id: undefined });
+        if (!r.ok) { err.textContent = r.error || "Couldn't join."; return; }
+        err.textContent = ""; lan.me = r.id; lanConnect();
+      });
+      $("jName").addEventListener("keydown", e => { if (e.key === "Enter") $("jGo").click(); });
+      $("jBack").addEventListener("click", () => { sfx("tap"); toMenu("online"); });
+      $("lStart").addEventListener("click", async () => { const r = await lanApi("start"); $("lErr").textContent = r.ok ? "" : r.error; });
+      $("lLeave").addEventListener("click", () => { sfx("tap"); lanLeave(); });
+      $("mLeave").addEventListener("click", () => {
+        sfx("tap");
+        if (matchMode === "lan") lanLeave(); else { bot.s = null; matchMode = null; toMenu("online"); }
+      });
+      $("mAgain").addEventListener("click", () => { if (matchMode === "bot") startBot(); else lanApi("again"); });
+
+      applyTheme(HOME_THEME, false);
+      renderSoundBtn();
+      go(idx, false);
+    })();
+  </script>
+</body>
+
+</html>
