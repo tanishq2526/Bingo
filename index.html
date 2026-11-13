@@ -1,0 +1,1874 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bingo — Multiplayer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <style>
+    /* ---------- Theme tokens ---------- */
+    :root,
+    [data-theme="neobrutalism"] {
+      --bg: radial-gradient(rgba(0, 0, 0, .2) 1.5px, transparent 1.6px) 0 0 / 20px 20px, #ffde59;
+      --text: #000;
+      --sub: #000;
+      --muted: #000;
+      --win: #000;
+      --font: "Arial Black", "Helvetica Neue", Arial, sans-serif;
+      --blur: none;
+      --ball-fs: clamp(24px, 7vw, 36px);
+      --cell-fs: clamp(20px, 6vw, 30px);
+      --ball-bg: #fff;
+      --ball-bd: 3px solid #000;
+      --ball-r: 8px;
+      --ball-shadow: 3px 3px 0 #000;
+      --accent: #ff5db1;
+      --accent-ink: #000;
+      --accent-edge: #000;
+      --chip-on-bd: #000;
+      --on-shadow: 5px 5px 0 #000;
+      --card-bg: #5ce1e6;
+      --card-r: 10px;
+      --card-bd: 4px solid #000;
+      --card-shadow: 10px 10px 0 #000;
+      --cell-bg: #fff;
+      --cell-hover: #fff3b0;
+      --cell-ink: #000;
+      --cell-done: rgba(0, 0, 0, .3);
+      --cell-bd: #000;
+      --cell-bw: 3px;
+      --cell-r: 6px;
+      --cell-shadow: 3px 3px 0 #000;
+      --cell-text-shadow: none;
+      --mark: #ff2e63;
+      --mark-w: 7px;
+      --mark-r: 0;
+      --mark-glow: none;
+      --strike-glow: none;
+      --btn-bg: #ff5db1;
+      --btn-ink: #000;
+      --btn-edge: #000;
+      --btn-bd: 3px solid #000;
+      --btn-r: 8px;
+    }
+
+    [data-theme="monochrome"] {
+      --bg: linear-gradient(160deg, #f5f5f5 0%, #d9d9d9 100%);
+      --text: #111;
+      --sub: #444;
+      --muted: #8c8c8c;
+      --win: #111;
+      --font: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      --blur: none;
+      --ball-bg: transparent;
+      --ball-bd: 1.5px solid #111;
+      --ball-r: 0;
+      --ball-shadow: none;
+      --accent: #111;
+      --accent-ink: #fff;
+      --accent-edge: #111;
+      --chip-on-bd: #111;
+      --on-shadow: none;
+      --card-bg: #fafafa;
+      --card-r: 0;
+      --card-bd: 1.5px solid #111;
+      --card-shadow: 0 24px 40px rgba(0, 0, 0, .14);
+      --cell-bg: #fff;
+      --cell-hover: #e6e6e6;
+      --cell-ink: #111;
+      --cell-done: rgba(17, 17, 17, .3);
+      --cell-bd: #111;
+      --cell-bw: 1.5px;
+      --cell-r: 0;
+      --cell-shadow: none;
+      --cell-text-shadow: none;
+      --mark: #111;
+      --mark-w: 4px;
+      --mark-r: 0;
+      --mark-glow: none;
+      --strike-glow: none;
+      --btn-bg: #111;
+      --btn-ink: #fff;
+      --btn-edge: #7a7a7a;
+      --btn-bd: 0;
+      --btn-r: 0;
+    }
+
+    [data-theme="glass"] {
+      --bg: radial-gradient(circle at 15% 20%, #ff6ec4 0, transparent 40%),
+        radial-gradient(circle at 85% 25%, #7873f5 0, transparent 45%),
+        radial-gradient(circle at 50% 95%, #19c6a3 0, transparent 45%), #1b1442;
+      --text: #fff;
+      --sub: rgba(255, 255, 255, .82);
+      --muted: rgba(255, 255, 255, .55);
+      --win: #ffe066;
+      --font: "Segoe UI", "SF Pro Display", "Helvetica Neue", system-ui, sans-serif;
+      --blur: blur(14px) saturate(140%);
+      --ball-bg: rgba(255, 255, 255, .12);
+      --ball-bd: 1px solid rgba(255, 255, 255, .4);
+      --ball-r: 50%;
+      --ball-shadow: 0 6px 18px rgba(20, 10, 60, .25);
+      --accent: #fff;
+      --accent-ink: #3b2a7a;
+      --accent-edge: #fff;
+      --chip-on-bd: #fff;
+      --on-shadow: 0 8px 28px rgba(255, 255, 255, .45);
+      --card-bg: rgba(255, 255, 255, .14);
+      --card-r: 28px;
+      --card-bd: 1px solid rgba(255, 255, 255, .4);
+      --card-shadow: 0 20px 50px rgba(20, 10, 60, .4);
+      --cell-bg: rgba(255, 255, 255, .16);
+      --cell-hover: rgba(255, 255, 255, .3);
+      --cell-ink: #fff;
+      --cell-done: rgba(255, 255, 255, .45);
+      --cell-bd: rgba(255, 255, 255, .45);
+      --cell-bw: 1px;
+      --cell-r: 16px;
+      --cell-shadow: inset 0 1px 0 rgba(255, 255, 255, .5), 0 4px 14px rgba(0, 0, 0, .15);
+      --cell-text-shadow: 0 1px 2px rgba(0, 0, 0, .25);
+      --mark: #ffe066;
+      --mark-w: 5px;
+      --mark-r: 3px;
+      --mark-glow: 0 0 10px rgba(255, 224, 102, .7);
+      --strike-glow: drop-shadow(0 0 5px rgba(255, 224, 102, .8));
+      --btn-bg: rgba(255, 255, 255, .24);
+      --btn-ink: #fff;
+      --btn-edge: rgba(255, 255, 255, .25);
+      --btn-bd: 1px solid rgba(255, 255, 255, .55);
+      --btn-r: 999px;
+    }
+
+    [data-theme="clay"] {
+      --bg: linear-gradient(160deg, #e4dcff 0%, #ffe3ee 100%);
+      --text: #4a3680;
+      --sub: #6a58a0;
+      --muted: #9d8fcc;
+      --win: #d9456f;
+      --font: "Nunito", "Quicksand", "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+      --blur: none;
+      --ball-bg: #efe8ff;
+      --ball-bd: none;
+      --ball-r: 50%;
+      --ball-shadow: inset -4px -4px 8px rgba(120, 100, 180, .2), inset 4px 4px 8px #fff, 4px 6px 10px rgba(100, 80, 160, .25);
+      --accent: #ff8fb1;
+      --accent-ink: #fff;
+      --accent-edge: #ffd0df;
+      --chip-on-bd: #ff8fb1;
+      --on-shadow: inset -4px -4px 8px rgba(0, 0, 0, .15), inset 4px 4px 8px rgba(255, 255, 255, .5), 5px 8px 16px rgba(255, 100, 150, .5);
+      --card-bg: #f1ebff;
+      --card-r: 42px;
+      --card-bd: none;
+      --card-shadow: inset -10px -10px 20px rgba(120, 100, 180, .18), inset 10px 10px 20px rgba(255, 255, 255, .95), 14px 18px 34px rgba(100, 80, 160, .35);
+      --cell-bg: #fff7fb;
+      --cell-hover: #ffe9f3;
+      --cell-ink: #5b3f9a;
+      --cell-done: rgba(91, 63, 154, .35);
+      --cell-bd: transparent;
+      --cell-bw: 0px;
+      --cell-r: 32%;
+      --cell-shadow: inset -5px -5px 10px rgba(180, 120, 170, .18), inset 5px 5px 10px rgba(255, 255, 255, .95), 5px 7px 12px rgba(100, 80, 160, .28);
+      --cell-text-shadow: none;
+      --mark: #ff7a59;
+      --mark-w: 8px;
+      --mark-r: 8px;
+      --mark-glow: 0 3px 4px rgba(150, 60, 30, .3);
+      --strike-glow: drop-shadow(0 3px 3px rgba(150, 60, 30, .3));
+      --btn-bg: #ff8fb1;
+      --btn-ink: #fff;
+      --btn-edge: #d9638a;
+      --btn-bd: 0;
+      --btn-r: 999px;
+    }
+
+    [data-theme="minecraft"] {
+      --bg: linear-gradient(#6fbf4a 0 44px, #4d8a2f 44px 52px, transparent 52px),
+        repeating-conic-gradient(#8a5a33 0 25%, #7a4e2c 0 50%) 0 0 / 48px 48px;
+      --text: #fff;
+      --sub: #ececec;
+      --muted: #3f3f3f;
+      --win: #ffe44d;
+      --font: "VT323", "Courier New", monospace;
+      --blur: none;
+      --ball-fs: clamp(28px, 8vw, 42px);
+      --cell-fs: clamp(28px, 8vw, 40px);
+      --ball-bg: #8b8b8b;
+      --ball-bd: none;
+      --ball-r: 0;
+      --ball-shadow: inset 4px 4px 0 #373737, inset -4px -4px 0 #fff;
+      --accent: #5fa84a;
+      --accent-ink: #fff;
+      --accent-edge: #5fa84a;
+      --chip-on-bd: #000;
+      --on-shadow: inset 4px 4px 0 #9bdc82, inset -4px -4px 0 #2e5f22, 0 6px 0 rgba(0, 0, 0, .35);
+      --card-bg: #c6c6c6;
+      --card-r: 0;
+      --card-bd: 4px solid #000;
+      --card-shadow: inset 4px 4px 0 #fff, inset -4px -4px 0 #555, 8px 8px 0 rgba(0, 0, 0, .35);
+      --cell-bg: #8b8b8b;
+      --cell-hover: #a5a5a5;
+      --cell-ink: #fff;
+      --cell-done: transparent;
+      --cell-bd: transparent;
+      --cell-bw: 0px;
+      --cell-r: 0;
+      --cell-shadow: inset 4px 4px 0 #373737, inset -4px -4px 0 #fff;
+      --cell-text-shadow: 2px 2px 0 #3f3f3f;
+      --mark: #e03a2f;
+      --mark-w: 6px;
+      --mark-r: 0;
+      --mark-glow: none;
+      --strike-glow: none;
+      --btn-bg: #5fa84a;
+      --btn-ink: #fff;
+      --btn-edge: #2e5f22;
+      --btn-bd: 3px solid #000;
+      --btn-r: 0;
+      --creeper: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 6 6' shape-rendering='crispEdges'%3E%3Crect width='6' height='6' fill='%235fa84a'/%3E%3Cg fill='%23000'%3E%3Crect x='0' y='0' width='2' height='2'/%3E%3Crect x='4' y='0' width='2' height='2'/%3E%3Crect x='2' y='2' width='2' height='1'/%3E%3Crect x='1' y='3' width='4' height='2'/%3E%3Crect x='1' y='5' width='1' height='1'/%3E%3Crect x='4' y='5' width='1' height='1'/%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      min-height: 100%;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      padding: 16px;
+      overflow-x: hidden;
+    }
+
+    /* Bar & Buttons */
+    .bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      max-width: 560px;
+    }
+
+    .bar button,
+    button.refresh {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 10px 18px;
+      border-radius: var(--btn-r);
+      cursor: pointer;
+      background: var(--btn-bg);
+      color: var(--btn-ink);
+      border: var(--btn-bd);
+      font-family: var(--font);
+      font-size: .92rem;
+      font-weight: 700;
+      box-shadow: 0 4px 0 var(--btn-edge);
+      -webkit-backdrop-filter: var(--blur);
+      backdrop-filter: var(--blur);
+      transition: background .15s, color .15s, transform .1s, box-shadow .1s;
+    }
+
+    .bar button.ghost,
+    button.refresh.ghost {
+      background: #fff;
+      color: #000;
+    }
+
+    .bar button:hover,
+    button.refresh:hover {
+      filter: brightness(1.06);
+    }
+
+    .bar button:active,
+    button.refresh:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 var(--btn-edge);
+    }
+
+    .bar button:disabled,
+    button.refresh:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .bar button:focus-visible,
+    button.refresh:focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    button.refresh.big {
+      width: min(340px, 88vw);
+      font-size: 1.15rem;
+      padding: 15px 24px;
+    }
+
+    /* BINGO Letter Balls */
+    .word {
+      display: flex;
+      gap: clamp(8px, 2.5vw, 16px);
+    }
+
+    .ball {
+      width: clamp(48px, 13vw, 68px);
+      aspect-ratio: 1;
+      border-radius: var(--ball-r);
+      display: grid;
+      place-items: center;
+      font-size: var(--ball-fs);
+      font-weight: 800;
+      color: var(--muted);
+      background: var(--ball-bg);
+      border: var(--ball-bd);
+      box-shadow: var(--ball-shadow);
+      -webkit-backdrop-filter: var(--blur);
+      backdrop-filter: var(--blur);
+      transition: background .3s, color .3s, transform .3s, box-shadow .3s;
+    }
+
+    .ball.on {
+      background: var(--accent);
+      color: var(--accent-ink);
+      border-color: var(--accent-edge);
+      transform: translateY(-6px) scale(1.08);
+      box-shadow: var(--on-shadow);
+    }
+
+    /* Card & Grid */
+    .card {
+      position: relative;
+      background: var(--card-bg);
+      border-radius: var(--card-r);
+      border: var(--card-bd);
+      padding: clamp(10px, 2.5vw, 16px);
+      width: min(92vw, 420px);
+      aspect-ratio: 1;
+      box-shadow: var(--card-shadow);
+      -webkit-backdrop-filter: var(--blur);
+      backdrop-filter: var(--blur);
+    }
+
+    .grid {
+      display: grid;
+      grid-template: repeat(5, 1fr) / repeat(5, 1fr);
+      gap: clamp(5px, 1.5vw, 9px);
+      width: 100%;
+      height: 100%;
+    }
+
+    .cell {
+      position: relative;
+      border: var(--cell-bw) solid var(--cell-bd);
+      border-radius: var(--cell-r);
+      background: var(--cell-bg);
+      color: var(--cell-ink);
+      box-shadow: var(--cell-shadow);
+      text-shadow: var(--cell-text-shadow);
+      font-family: var(--font);
+      font-weight: 700;
+      font-size: var(--cell-fs);
+      cursor: pointer;
+      transition: background .15s, transform .1s;
+    }
+
+    .cell:hover:not(.marked) {
+      background: var(--cell-hover);
+    }
+
+    .cell:active:not(.marked) {
+      transform: scale(.95);
+    }
+
+    .cell.marked {
+      cursor: default;
+      color: var(--cell-done);
+      text-shadow: none;
+    }
+
+    .cell.marked::before,
+    .cell.marked::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 82%;
+      height: var(--mark-w);
+      border-radius: var(--mark-r);
+      background: var(--mark);
+      box-shadow: var(--mark-glow);
+      transform: translate(-50%, -50%) rotate(45deg) scaleX(0);
+      animation: draw .22s ease-out forwards;
+    }
+
+    .cell.marked::after {
+      transform: translate(-50%, -50%) rotate(-45deg) scaleX(0);
+      animation-delay: .08s;
+      --r: -45deg;
+    }
+
+    .cell.marked::before {
+      --r: 45deg;
+    }
+
+    @keyframes draw {
+      to {
+        transform: translate(-50%, -50%) rotate(var(--r)) scaleX(1);
+      }
+    }
+
+    .strikes {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      padding: inherit;
+      filter: var(--strike-glow);
+    }
+
+    .strikes line {
+      stroke: var(--mark);
+      stroke-width: .13;
+      stroke-linecap: round;
+      opacity: .9;
+      stroke-dasharray: 6;
+      stroke-dashoffset: 6;
+      animation: strike .5s ease-out forwards;
+    }
+
+    @keyframes strike {
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    /* Minecraft extra overrides */
+    [data-theme="minecraft"] .cell.marked {
+      background-image: var(--creeper);
+      background-size: 100% 100%;
+      image-rendering: pixelated;
+      color: transparent;
+    }
+    [data-theme="minecraft"] .cell.marked::before,
+    [data-theme="minecraft"] .cell.marked::after {
+      display: none;
+    }
+
+    /* Screens */
+    .screen {
+      display: none;
+      width: 100%;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .screen.active {
+      display: flex;
+    }
+
+    /* Hero */
+    .hero .ball {
+      width: clamp(54px, 15vw, 84px);
+      font-size: clamp(30px, 9vw, 48px);
+      animation: hop 1.6s ease-in-out infinite;
+      animation-delay: calc(var(--i) * .12s);
+    }
+
+    @keyframes hop {
+      0%, 55%, 100% { transform: translateY(0); }
+      25% { transform: translateY(-16px); }
+    }
+
+    .tag {
+      font-size: 1.05rem;
+      text-align: center;
+      font-weight: 700;
+      max-width: 440px;
+    }
+
+    .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      align-items: center;
+      margin-top: 6px;
+    }
+
+    .opt {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .cap {
+      font-size: .88rem;
+      font-weight: 700;
+      opacity: .8;
+      text-align: center;
+    }
+
+    .ptitle {
+      font-size: 1.7rem;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .tinput {
+      width: min(340px, 88vw);
+      padding: 12px 16px;
+      border-radius: min(var(--btn-r), 12px);
+      border: 2px solid var(--cell-bd);
+      background: var(--cell-bg);
+      color: var(--cell-ink);
+      font-family: var(--font);
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .tinput:focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .err {
+      min-height: 1.3em;
+      text-align: center;
+      font-weight: 700;
+      color: var(--win);
+      font-size: .92rem;
+    }
+
+    .panel {
+      width: min(92vw, 430px);
+      padding: 14px 16px;
+      background: var(--ball-bg);
+      border: var(--ball-bd);
+      border-radius: min(var(--card-r), 16px);
+      box-shadow: var(--ball-shadow);
+      -webkit-backdrop-filter: var(--blur);
+      backdrop-filter: var(--blur);
+    }
+
+    .plabel {
+      font-size: .95rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .roster {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .roster li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 6px 8px;
+      border-radius: 6px;
+    }
+
+    .roster li.turn {
+      background: rgba(255, 255, 255, .15);
+      border-left: 4px solid var(--accent);
+    }
+
+    .roster li.turn .nm::before {
+      content: "\25B6  ";
+      color: var(--accent);
+    }
+
+    .tg {
+      font-size: .75rem;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(128, 128, 128, .2);
+      margin-left: 6px;
+    }
+
+    .tg.crown {
+      background: #ffd700;
+      color: #000;
+    }
+
+    .pl {
+      display: flex;
+      gap: 3px;
+    }
+
+    .pl span {
+      width: 22px;
+      height: 22px;
+      display: grid;
+      place-items: center;
+      font-size: .72rem;
+      font-weight: 800;
+      border-radius: 50%;
+      background: rgba(128, 128, 128, .28);
+    }
+
+    .pl span.on {
+      background: var(--accent);
+      color: var(--accent-ink);
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .chips span {
+      min-width: 30px;
+      text-align: center;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(128, 128, 128, .28);
+      font-weight: 800;
+    }
+
+    .chips span.new {
+      background: var(--accent);
+      color: var(--accent-ink);
+    }
+
+    .banner {
+      text-align: center;
+      font-size: 1.15rem;
+      font-weight: 800;
+      min-height: 1.4em;
+    }
+
+    .banner.mine,
+    .banner.win {
+      color: var(--win);
+    }
+
+    .banner.win {
+      font-size: 1.4rem;
+    }
+
+    .lastcall {
+      font-size: .95rem;
+      text-align: center;
+      min-height: 1.3em;
+    }
+
+    #match .cell {
+      cursor: default;
+    }
+
+    #match .cell.playable {
+      cursor: pointer;
+      outline: 3px solid var(--accent);
+      outline-offset: 2px;
+      animation: pulse 1.2s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    #match .cell.latest {
+      outline: 3px dotted var(--mark);
+      outline-offset: 2px;
+    }
+
+    /* Room Cards & Discovery */
+    .room-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: min(92vw, 430px);
+      max-height: 280px;
+      overflow-y: auto;
+      padding: 2px;
+    }
+
+    .room-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 14px;
+      background: var(--cell-bg);
+      border: var(--cell-bw, 2px) solid var(--cell-bd);
+      border-radius: min(var(--card-r), 12px);
+      box-shadow: var(--cell-shadow);
+      color: var(--cell-ink);
+      gap: 12px;
+    }
+
+    .room-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      text-align: left;
+    }
+
+    .room-title {
+      font-weight: 800;
+      font-size: 1.05rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .room-sub {
+      font-size: 0.85rem;
+      opacity: 0.8;
+    }
+
+    .badge-wifi {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #10b981;
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 999px;
+    }
+
+    .code-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--cell-bg);
+      color: var(--cell-ink);
+      border: 2px solid var(--cell-bd);
+      border-radius: min(var(--btn-r), 10px);
+      padding: 6px 14px;
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .btn-copy {
+      background: var(--accent);
+      color: var(--accent-ink);
+      border: 1px solid var(--accent-edge);
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .empty-state {
+      padding: 20px;
+      text-align: center;
+      font-size: .95rem;
+      font-weight: 700;
+      opacity: .8;
+      background: rgba(128, 128, 128, .1);
+      border-radius: 10px;
+      border: 1px dashed var(--muted);
+      width: 100%;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: min(92vw, 430px);
+      font-size: .85rem;
+      font-weight: 800;
+      opacity: .6;
+      margin: 4px 0;
+    }
+    .divider::before, .divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--muted);
+      opacity: .4;
+    }
+
+    .server-pill {
+      font-size: .78rem;
+      font-weight: 700;
+      opacity: .75;
+      text-align: center;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    /* Theme slider */
+    .slider {
+      position: relative;
+      width: 100vw;
+      height: 350px;
+      overflow: hidden;
+      touch-action: pan-y;
+      user-select: none;
+    }
+
+    .track { position: absolute; inset: 0; }
+    .slide {
+      position: absolute;
+      left: 50%;
+      top: 14px;
+      width: min(64vw, 260px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      transition: transform .35s ease, opacity .35s ease;
+    }
+
+    .stage {
+      width: 100%;
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background: var(--bg);
+      border: 3px solid #000;
+      border-radius: 26px;
+      box-shadow: 6px 6px 0 #000;
+    }
+
+    .mini {
+      width: 72%;
+      aspect-ratio: 1;
+      padding: 8px;
+      background: var(--card-bg);
+      border: var(--card-bd);
+      border-radius: var(--card-r);
+      box-shadow: var(--card-shadow);
+      -webkit-backdrop-filter: var(--blur);
+      backdrop-filter: var(--blur);
+    }
+
+    .grid3 {
+      display: grid;
+      grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+      gap: 5px;
+      width: 100%;
+      height: 100%;
+    }
+
+    .mini .cell {
+      font-size: calc(var(--cell-fs) * .62);
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .sname {
+      font-size: 1.6rem;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .dots { display: flex; gap: 10px; }
+    .dots button {
+      width: 14px;
+      height: 14px;
+      padding: 0;
+      border-radius: 50%;
+      border: 3px solid #000;
+      background: #fff;
+      cursor: pointer;
+      transition: transform .2s, background .2s;
+    }
+    .dots button[aria-current="true"] {
+      background: #ff5db1;
+      transform: scale(1.3);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Home -->
+  <section class="screen active" id="home">
+    <div class="word hero" aria-label="Bingo">
+      <div class="ball on" style="--i:0">B</div>
+      <div class="ball on" style="--i:1">I</div>
+      <div class="ball on" style="--i:2">N</div>
+      <div class="ball on" style="--i:3">G</div>
+      <div class="ball on" style="--i:4">O</div>
+    </div>
+    <p class="tag">Real-time multiplayer Bingo with rooms and same-Wi-Fi discovery.</p>
+    <div class="menu">
+      <button class="refresh big" id="goOnline">Online Multiplayer</button>
+      <button class="refresh big ghost" id="offline">Offline Match</button>
+    </div>
+    <div class="server-pill" id="serverPill">Backend: Auto</div>
+  </section>
+
+  <!-- Online Menu -->
+  <section class="screen" id="online">
+    <h2 class="ptitle">Online Match</h2>
+    <div class="menu">
+      <div class="opt">
+        <button class="refresh big" id="btnHostGame">Host a Game</button>
+        <span class="cap">Create a room and invite friends</span>
+      </div>
+      <div class="opt">
+        <button class="refresh big ghost" id="btnJoinGame">Join a Room</button>
+        <span class="cap">Discover rooms on your Wi-Fi or join by code</span>
+      </div>
+      <div class="opt">
+        <button class="refresh big ghost" id="bot">Bot Player</button>
+        <span class="cap">Play against the computer offline</span>
+      </div>
+    </div>
+    <div class="bar">
+      <button class="ghost" id="oBack">Back</button>
+      <button class="ghost" id="btnConfigServer">⚙️ Backend</button>
+    </div>
+  </section>
+
+  <!-- Host Game Screen -->
+  <section class="screen" id="hostScreen">
+    <h2 class="ptitle">Host a Game</h2>
+    <p class="tag">Create a new game room. Players on your Wi-Fi will see it automatically.</p>
+    <input class="tinput" id="hostPlayerName" maxlength="16" placeholder="Your name (e.g. Alex)" autocomplete="off">
+    <input class="tinput" id="hostRoomName" maxlength="24" placeholder="Room name (optional)" autocomplete="off">
+    <div class="err" id="hostErr"></div>
+    <button class="refresh" id="btnCreateRoom">Create Room & Open Lobby</button>
+    <div class="bar"><button class="ghost" id="hostBack">Back</button></div>
+  </section>
+
+  <!-- Join Room / Discovery Screen -->
+  <section class="screen" id="joinScreen">
+    <h2 class="ptitle">Active Rooms</h2>
+    <p class="tag">Rooms discovered on your Wi-Fi network:</p>
+    <div class="bar">
+      <button class="ghost" id="btnRefreshRooms">🔄 Refresh Rooms</button>
+    </div>
+    <div class="room-list" id="wifiRoomList">
+      <div class="empty-state">Searching for rooms on your Wi-Fi…</div>
+    </div>
+
+    <div class="divider">OR JOIN BY CODE</div>
+
+    <input class="tinput" id="joinCode" maxlength="4" placeholder="4-Letter Room Code (e.g. A3F9)" style="text-transform:uppercase" autocomplete="off">
+    <input class="tinput" id="joinPlayerName" maxlength="16" placeholder="Your name" autocomplete="off">
+    <div class="err" id="joinErr"></div>
+    <button class="refresh" id="btnJoinByCode">Join Room</button>
+
+    <div class="bar"><button class="ghost" id="joinBack">Back</button></div>
+  </section>
+
+  <!-- Room Lobby Screen -->
+  <section class="screen" id="lobby">
+    <h2 class="ptitle" id="lobbyRoomTitle">Game Lobby</h2>
+    <div class="code-pill">
+      <span>ROOM CODE:</span>
+      <span id="lobbyRoomCode">----</span>
+      <button class="btn-copy" id="btnCopyCode">Copy</button>
+    </div>
+    <p class="tag" id="lobbyWifiNotice">Players on the same Wi-Fi can discover this room automatically.</p>
+    <div class="panel">
+      <div class="plabel">
+        <span>Players Joined</span>
+        <span id="lobbyPlayerCount" style="opacity:.7">0/8</span>
+      </div>
+      <ul class="roster" id="lRoster"></ul>
+    </div>
+    <div class="err" id="lErr"></div>
+    <button class="refresh" id="lStart">Start Game</button>
+    <p class="tag" id="lHint" style="font-size:.9rem;"></p>
+    <div class="bar"><button class="ghost" id="lLeave">Leave Room</button></div>
+  </section>
+
+  <!-- Match Screen (Bot or Online) -->
+  <section class="screen" id="match">
+    <div class="bar">
+      <button class="ghost" id="mLeave">Leave</button>
+      <button class="sound" aria-pressed="true">Sound: On</button>
+    </div>
+    <div class="word" id="mWord" aria-label="Your Bingo progress"></div>
+    <div class="banner" id="mBanner"></div>
+    <div class="lastcall" id="mLast"></div>
+    <div class="card">
+      <div class="grid" id="mGrid"></div>
+      <svg class="strikes" id="mStrikes" viewBox="0 0 5 5" preserveAspectRatio="none"></svg>
+    </div>
+    <button class="refresh" id="mAgain" hidden>Play Again</button>
+    <div class="panel">
+      <div class="plabel">Players</div>
+      <ul class="roster" id="mRoster"></ul>
+    </div>
+    <div class="panel">
+      <div class="plabel">Numbers Called</div>
+      <div class="chips" id="mChips"></div>
+    </div>
+  </section>
+
+  <!-- Theme Picker -->
+  <section class="screen" id="picker">
+    <h2 class="ptitle">Choose Your Theme</h2>
+    <div class="slider" id="slider" role="group" aria-label="Themes">
+      <div class="track" id="track"></div>
+    </div>
+    <div class="dots" id="dots"></div>
+    <div class="bar" style="margin-top:10px;">
+      <button class="ghost" id="prev">Previous</button>
+      <button class="refresh" id="next">Next</button>
+    </div>
+  </section>
+
+  <!-- Solo Offline Game -->
+  <section class="screen" id="game">
+    <div class="bar">
+      <button class="ghost" id="toHome">Home</button>
+      <button class="ghost" id="toThemes">Themes</button>
+      <button class="sound" aria-pressed="true">Sound: On</button>
+    </div>
+    <div class="word" id="word" aria-label="Bingo progress"></div>
+    <div class="card">
+      <div class="grid" id="grid"></div>
+      <svg class="strikes" id="strikes" viewBox="0 0 5 5" preserveAspectRatio="none"></svg>
+    </div>
+    <div class="banner" id="status"></div>
+    <button class="refresh" id="refresh">New Game</button>
+  </section>
+
+  <script>
+    (() => {
+      const LETTERS = ["B", "I", "N", "G", "O"];
+      const NS = "http://www.w3.org/2000/svg";
+
+      /* ---------- Storage ---------- */
+      const store = {
+        get: k => { try { return localStorage.getItem(k); } catch { return null; } },
+        set: (k, v) => { try { localStorage.setItem(k, v); } catch {} }
+      };
+
+      /* ---------- Themes ---------- */
+      const THEMES = [
+        { id: "neobrutalism", name: "Neo-Brutalism" },
+        { id: "monochrome", name: "Monochrome" },
+        { id: "glass", name: "Glassmorphism" },
+        { id: "clay", name: "Claymorphism" },
+        { id: "minecraft", name: "Minecraft" }
+      ];
+      let theme = THEMES.some(t => t.id === store.get("bingoTheme")) ? store.get("bingoTheme") : THEMES[0].id;
+
+      function applyTheme(id, save) {
+        theme = id;
+        document.documentElement.dataset.theme = id;
+        if (save) store.set("bingoTheme", id);
+      }
+
+      /* ---------- Web Audio Synthesized Sounds ---------- */
+      let ctx = null;
+      let muted = store.get("bingoMuted") === "1";
+
+      function audio() {
+        if (!ctx) {
+          const AC = window.AudioContext || window.webkitAudioContext;
+          if (!AC) return null;
+          ctx = new AC();
+        }
+        if (ctx.state === "suspended") ctx.resume();
+        return ctx;
+      }
+
+      function tone(freq, dur, type = "sine", vol = .2, delay = 0, slideTo) {
+        if (muted) return;
+        const c = audio(); if (!c) return;
+        const t = c.currentTime + delay;
+        const o = c.createOscillator(), g = c.createGain();
+        o.type = type;
+        o.frequency.setValueAtTime(freq, t);
+        if (slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, t + dur);
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(vol, t + .01);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+        o.connect(g).connect(c.destination);
+        o.start(t); o.stop(t + dur + .03);
+      }
+
+      function noise(dur, vol, freq) {
+        if (muted) return;
+        const c = audio(); if (!c) return;
+        const n = Math.floor(c.sampleRate * dur);
+        const buf = c.createBuffer(1, n, c.sampleRate), d = buf.getChannelData(0);
+        for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n);
+        const s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain();
+        s.buffer = buf; f.type = "bandpass"; f.frequency.value = freq; g.gain.value = vol;
+        s.connect(f).connect(g).connect(c.destination);
+        s.start();
+      }
+
+      const SND = {
+        neobrutalism: { wave: "square", scale: [392, 494, 587, 784], tap: () => { tone(180, .09, "square", .16, 0, 70); noise(.03, .35, 900); } },
+        monochrome: { wave: "sine", scale: [440, 523, 659, 784], tap: () => { noise(.025, .45, 3000); tone(900, .03, "sine", .05); } },
+        glass: { wave: "sine", scale: [784, 988, 1175, 1568], tap: () => { tone(1568, .35, "sine", .15); tone(2349, .25, "sine", .06); } },
+        clay: { wave: "triangle", scale: [523, 659, 784, 1047], tap: () => { tone(520, .14, "sine", .3, 0, 240); tone(260, .12, "triangle", .12); } },
+        minecraft: { wave: "triangle", scale: [659, 784, 988, 1319], tap: () => { noise(.06, .5, 500); tone(110, .08, "square", .14, 0, 70); } }
+      };
+
+      function sfx(kind) {
+        const s = SND[theme] || SND.neobrutalism;
+        if (kind === "tap") s.tap();
+        else if (kind === "line") s.scale.slice(0, 3).forEach((f, i) => tone(f, .25, s.wave, .2, i * .09));
+        else if (kind === "win") s.scale.concat([s.scale[s.scale.length - 1] * 1.5]).forEach((f, i) => tone(f, .4, s.wave, .22, i * .11));
+      }
+
+      const soundBtns = [...document.querySelectorAll(".sound")];
+      function renderSoundBtn() {
+        soundBtns.forEach(b => {
+          b.setAttribute("aria-pressed", !muted);
+          b.textContent = muted ? "Sound: Off" : "Sound: On";
+        });
+      }
+      soundBtns.forEach(b => b.addEventListener("click", () => {
+        muted = !muted; store.set("bingoMuted", muted ? "1" : "0");
+        renderSoundBtn(); sfx("tap");
+      }));
+
+      /* ---------- Backend URL Management ---------- */
+      // TIP: Once deployed to Render, you can paste your Render URL here (e.g. "https://bingo-backend.onrender.com")
+      // so your friends don't even have to configure it manually!
+      const DEFAULT_BACKEND_URL = "";
+
+      function getBackendUrl() {
+        if (DEFAULT_BACKEND_URL) return DEFAULT_BACKEND_URL.trim().replace(/\/+$/, "");
+        const saved = store.get("bingoServerUrl");
+        if (saved) return saved.trim().replace(/\/+$/, "");
+        if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+          return "http://localhost:3000";
+        }
+        // If served from Render directly (not vercel.app):
+        if (location.protocol.startsWith("http") && !location.hostname.includes("vercel.app")) {
+          return location.origin;
+        }
+        return "";
+      }
+
+      function updateServerPill() {
+        const url = getBackendUrl();
+        const p = document.getElementById("serverPill");
+        if (!p) return;
+        if (!url) {
+          p.textContent = "⚙️ Configure Backend URL";
+          p.style.color = "#ff2e63";
+        } else {
+          try {
+            const parsed = new URL(url);
+            p.textContent = "Backend: " + parsed.hostname;
+            p.style.color = "";
+          } catch {
+            p.textContent = "Backend: " + url;
+          }
+        }
+      }
+
+      function promptBackendUrl() {
+        const current = getBackendUrl();
+        const input = prompt(
+          "Enter your Render backend URL (e.g. https://your-bingo.onrender.com or http://localhost:3000):",
+          current || "https://"
+        );
+        if (input !== null && input.trim()) {
+          store.set("bingoServerUrl", input.trim());
+          updateServerPill();
+          return input.trim();
+        }
+        return current;
+      }
+
+      function requireBackendUrl() {
+        let url = getBackendUrl();
+        if (!url) {
+          url = promptBackendUrl();
+        }
+        return url;
+      }
+
+      document.getElementById("serverPill").addEventListener("click", promptBackendUrl);
+      document.getElementById("btnConfigServer").addEventListener("click", promptBackendUrl);
+
+      /* ---------- Screen Management ---------- */
+      const $ = id => document.getElementById(id);
+      const SCREENS = ["home", "online", "hostScreen", "joinScreen", "lobby", "match", "picker", "game"];
+      const HOME_THEME = "neobrutalism";
+
+      function show(id) {
+        SCREENS.forEach(s => {
+          const el = $(s);
+          if (el) el.classList.toggle("active", s === id);
+        });
+        window.scrollTo(0, 0);
+      }
+
+      function toMenu(id) {
+        applyTheme(HOME_THEME, false);
+        show(id);
+      }
+
+      /* ---------- 12 Lines for 5x5 ---------- */
+      const LINES = [];
+      for (let r = 0; r < 5; r++) LINES.push({ cells: [0, 1, 2, 3, 4].map(c => r * 5 + c), p: [0.2, r + .5, 4.8, r + .5] });
+      for (let c = 0; c < 5; c++) LINES.push({ cells: [0, 1, 2, 3, 4].map(r => r * 5 + c), p: [c + .5, 0.2, c + .5, 4.8] });
+      LINES.push({ cells: [0, 6, 12, 18, 24], p: [0.2, 0.2, 4.8, 4.8] });
+      LINES.push({ cells: [4, 8, 12, 16, 20], p: [4.8, 0.2, 0.2, 4.8] });
+
+      function shuffle(a) {
+        for (let i = a.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+      }
+
+      /* ---------- Theme Picker Carousel ---------- */
+      let idx = Math.max(0, THEMES.findIndex(t => t.id === theme));
+      const track = $("track"), dots = $("dots"), slider = $("slider");
+      const NUMS = [7, 12, 3, 19, 5, 21, 8, 14, 25];
+
+      THEMES.forEach((t, k) => {
+        const s = document.createElement("div");
+        s.className = "slide";
+        s.innerHTML = `<div class="stage" data-theme="${t.id}"><div class="mini"><div class="grid3">` +
+          NUMS.map((n, i) => `<div class="cell${i % 4 === 0 ? " marked" : ""}">${n}</div>`).join("") +
+          `</div></div></div><div class="sname">${t.name}</div>`;
+        track.appendChild(s);
+
+        const d = document.createElement("button");
+        d.setAttribute("aria-label", "Show " + t.name);
+        d.addEventListener("click", () => go(k));
+        dots.appendChild(d);
+      });
+
+      function go(i, play = true) {
+        idx = Math.max(0, Math.min(THEMES.length - 1, i));
+        theme = THEMES[idx].id;
+        [...track.children].forEach((s, k) => {
+          const d = k - idx, a = Math.abs(d);
+          s.style.transform = `translateX(${-50 + d * 92}%) scale(${a === 0 ? 1 : a === 1 ? .74 : .55})`;
+          s.style.opacity = a === 0 ? 1 : a === 1 ? .55 : 0;
+          s.style.pointerEvents = a > 1 ? "none" : "auto";
+          s.style.zIndex = 10 - a;
+        });
+        [...dots.children].forEach((b, k) => b.setAttribute("aria-current", String(k === idx)));
+        if (play) sfx("tap");
+      }
+
+      let sx = null;
+      slider.addEventListener("pointerdown", e => { sx = e.clientX; });
+      slider.addEventListener("pointercancel", () => { sx = null; });
+      slider.addEventListener("pointerup", e => {
+        if (sx === null) return;
+        const dx = e.clientX - sx; sx = null;
+        if (Math.abs(dx) > 40) return go(idx + (dx < 0 ? 1 : -1));
+        const slide = e.target.closest(".slide");
+        if (slide) { const k = [...track.children].indexOf(slide); if (k !== idx) go(k); }
+      });
+
+      document.addEventListener("keydown", e => {
+        if (!$("picker").classList.contains("active")) return;
+        if (e.key === "ArrowRight") go(idx + 1);
+        if (e.key === "ArrowLeft") go(idx - 1);
+      });
+
+      let mode = "offline", from = "home", matchMode = null;
+      $("goOnline").addEventListener("click", () => { sfx("tap"); show("online"); updateServerPill(); });
+      $("offline").addEventListener("click", () => { sfx("tap"); mode = "offline"; from = "home"; go(idx, false); show("picker"); });
+      $("oBack").addEventListener("click", () => { sfx("tap"); show("home"); });
+
+      $("prev").addEventListener("click", () => { toMenu(from); sfx("tap"); });
+      $("next").addEventListener("click", () => {
+        applyTheme(THEMES[idx].id, true);
+        sfx("tap");
+        if (mode === "bot") startBot();
+        else { newSoloGame(); show("game"); }
+      });
+
+      /* ---------- Solo Offline Match ---------- */
+      let soloMarked, soloDone, soloFinished;
+      function newSoloGame() {
+        soloMarked = new Set();
+        soloDone = new Set();
+        soloFinished = false;
+        $("strikes").innerHTML = "";
+        $("status").textContent = "Tap a number to cross it out.";
+        $("status").className = "banner";
+        $("word").innerHTML = LETTERS.map(l => `<div class="ball">${l}</div>`).join("");
+
+        const nums = shuffle(Array.from({ length: 25 }, (_, i) => i + 1));
+        const g = $("grid");
+        g.innerHTML = "";
+        nums.forEach(n => {
+          const b = document.createElement("button");
+          b.className = "cell";
+          b.textContent = n;
+          b.addEventListener("click", () => {
+            if (soloMarked.has(n) || soloFinished) return;
+            soloMarked.add(n);
+            b.classList.add("marked");
+            sfx("tap");
+            checkSoloLines(nums);
+          });
+          g.appendChild(b);
+        });
+      }
+
+      function checkSoloLines(nums) {
+        let newLines = 0;
+        LINES.forEach((line, idx) => {
+          if (!soloDone.has(idx) && line.cells.every(c => soloMarked.has(nums[c]))) {
+            soloDone.add(idx);
+            newLines++;
+            const el = document.createElementNS(NS, "line");
+            el.setAttribute("x1", line.p[0]); el.setAttribute("y1", line.p[1]);
+            el.setAttribute("x2", line.p[2]); el.setAttribute("y2", line.p[3]);
+            el.setAttribute("pathLength", "6");
+            $("strikes").appendChild(el);
+          }
+        });
+
+        const lit = Math.min(soloDone.size, 5);
+        [...$("word").children].forEach((b, i) => b.classList.toggle("on", i < lit));
+
+        if (lit >= 5) {
+          soloFinished = true;
+          $("status").textContent = "BINGO! You completed 5 lines.";
+          $("status").className = "banner win";
+          setTimeout(() => sfx("win"), 150);
+        } else if (newLines > 0) {
+          $("status").textContent = `Line complete! "${LETTERS[lit - 1]}" is lit.`;
+          setTimeout(() => sfx("line"), 150);
+        }
+      }
+
+      $("refresh").addEventListener("click", () => { newSoloGame(); sfx("tap"); });
+      $("toHome").addEventListener("click", () => { toMenu("home"); sfx("tap"); });
+      $("toThemes").addEventListener("click", () => { mode = "offline"; from = "home"; applyTheme(HOME_THEME, false); go(idx, false); show("picker"); });
+
+      /* ---------- Multi-Room State & Networking ---------- */
+      let roomES = null;
+      let currentRoom = null; // { code, id, host, name }
+      let refreshTimer = null;
+
+      function leaveCurrentRoom() {
+        if (currentRoom) {
+          const base = getBackendUrl();
+          if (base) {
+            fetch(`${base}/api/rooms/leave`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ code: currentRoom.code, id: currentRoom.id })
+            }).catch(() => {});
+          }
+        }
+        if (roomES) { roomES.close(); roomES = null; }
+        currentRoom = null;
+        mKey = "";
+        toMenu("online");
+      }
+
+      // Host Game Button
+      $("btnHostGame").addEventListener("click", () => {
+        sfx("tap");
+        const base = requireBackendUrl();
+        if (!base) return;
+        $("hostPlayerName").value = store.get("bingoName") || "";
+        $("hostRoomName").value = "";
+        $("hostErr").textContent = "";
+        show("hostScreen");
+      });
+      $("hostBack").addEventListener("click", () => { sfx("tap"); show("online"); });
+
+      // Join Room Button
+      $("btnJoinGame").addEventListener("click", () => {
+        sfx("tap");
+        const base = requireBackendUrl();
+        if (!base) return;
+        $("joinPlayerName").value = store.get("bingoName") || "";
+        $("joinCode").value = "";
+        $("joinErr").textContent = "";
+        show("joinScreen");
+        loadRooms();
+        if (refreshTimer) clearInterval(refreshTimer);
+        refreshTimer = setInterval(() => {
+          if ($("joinScreen").classList.contains("active")) loadRooms(true);
+        }, 4000);
+      });
+      $("joinBack").addEventListener("click", () => {
+        sfx("tap");
+        if (refreshTimer) clearInterval(refreshTimer);
+        show("online");
+      });
+      $("btnRefreshRooms").addEventListener("click", () => { sfx("tap"); loadRooms(); });
+
+      // Room Discovery API Fetch
+      async function loadRooms(silent = false) {
+        const base = getBackendUrl();
+        if (!base) return;
+        const listEl = $("wifiRoomList");
+        if (!silent) listEl.innerHTML = `<div class="empty-state">Searching for active rooms…</div>`;
+        try {
+          const res = await fetch(`${base}/api/rooms`);
+          const data = await res.json();
+          renderRoomList(data.wifiRooms || [], data.allRooms || []);
+        } catch {
+          if (!silent) {
+            listEl.innerHTML = `<div class="empty-state">Could not connect to backend (${base}). Ensure server is running.</div>`;
+          }
+        }
+      }
+
+      function renderRoomList(wifiRooms, allRooms) {
+        const listEl = $("wifiRoomList");
+        listEl.innerHTML = "";
+
+        if (wifiRooms.length === 0) {
+          const nonWifi = allRooms.filter(r => !wifiRooms.some(w => w.code === r.code));
+          if (nonWifi.length === 0) {
+            listEl.innerHTML = `<div class="empty-state">No rooms found on your Wi-Fi yet. Host one or join via code!</div>`;
+            return;
+          }
+        }
+
+        // Display rooms (prefer Wi-Fi matches, then others)
+        const display = [...wifiRooms];
+        allRooms.forEach(r => {
+          if (!display.some(d => d.code === r.code)) display.push(r);
+        });
+
+        display.forEach(r => {
+          const card = document.createElement("div");
+          card.className = "room-card";
+          const isLobby = r.phase === "lobby";
+          card.innerHTML = `
+            <div class="room-meta">
+              <div class="room-title">
+                ${r.name}
+                ${r.sameWifi ? '<span class="badge-wifi">📶 Same Wi-Fi</span>' : ''}
+              </div>
+              <div class="room-sub">Host: <b>${r.hostName}</b> • ${r.playerCount}/${r.maxPlayers} players • <i>${r.phase.toUpperCase()}</i></div>
+            </div>
+            <div>
+              <button class="refresh" ${!isLobby ? "disabled" : ""}>
+                ${isLobby ? "Join" : "Playing"}
+              </button>
+            </div>
+          `;
+          const joinBtn = card.querySelector("button");
+          joinBtn.addEventListener("click", () => {
+            sfx("tap");
+            const name = $("joinPlayerName").value.trim() || store.get("bingoName");
+            if (!name) {
+              const asked = prompt("Enter your name to join " + r.name + ":");
+              if (asked && asked.trim()) {
+                joinRoom(r.code, asked.trim());
+              }
+            } else {
+              joinRoom(r.code, name);
+            }
+          });
+          listEl.appendChild(card);
+        });
+      }
+
+      // Create Room Handler
+      $("btnCreateRoom").addEventListener("click", async () => {
+        const name = $("hostPlayerName").value.trim();
+        const roomName = $("hostRoomName").value.trim();
+        const err = $("hostErr");
+        if (!name) { err.textContent = "Please enter your name."; return; }
+        const base = requireBackendUrl();
+        if (!base) return;
+
+        err.textContent = "Creating room…";
+        try {
+          const res = await fetch(`${base}/api/rooms/create`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, roomName })
+          });
+          const data = await res.json();
+          if (!res.ok) { err.textContent = data.error || "Failed to create room."; return; }
+
+          store.set("bingoName", name);
+          err.textContent = "";
+          currentRoom = { code: data.code, id: data.playerId, host: true, name: data.roomName };
+          connectRoomSSE(data.code, data.playerId);
+        } catch {
+          err.textContent = "Cannot reach server. Check backend URL.";
+        }
+      });
+
+      // Join by Code Handler
+      $("btnJoinByCode").addEventListener("click", () => {
+        const code = $("joinCode").value.trim().toUpperCase();
+        const name = $("joinPlayerName").value.trim();
+        if (!code) { $("joinErr").textContent = "Enter 4-letter room code."; return; }
+        if (!name) { $("joinErr").textContent = "Enter your name."; return; }
+        joinRoom(code, name);
+      });
+
+      async function joinRoom(code, name) {
+        const base = requireBackendUrl();
+        if (!base) return;
+        const err = $("joinErr");
+        err.textContent = "Connecting…";
+        try {
+          const res = await fetch(`${base}/api/rooms/join`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ code, name })
+          });
+          const data = await res.json();
+          if (!res.ok) { err.textContent = data.error || "Cannot join room."; return; }
+
+          store.set("bingoName", name);
+          err.textContent = "";
+          if (refreshTimer) clearInterval(refreshTimer);
+          currentRoom = { code: data.code, id: data.playerId, host: false, name: data.roomName };
+          connectRoomSSE(data.code, data.playerId);
+        } catch {
+          err.textContent = "Failed to reach server.";
+        }
+      }
+
+      // Connect SSE for Room
+      function connectRoomSSE(code, playerId) {
+        if (roomES) roomES.close();
+        const base = getBackendUrl();
+        roomES = new EventSource(`${base}/events?code=${code}&id=${playerId}`);
+
+        roomES.onmessage = e => {
+          const s = JSON.parse(e.data);
+          if (s.gone) {
+            alert(s.error || "You have been disconnected from the room.");
+            leaveCurrentRoom();
+            return;
+          }
+          if (s.phase === "lobby") {
+            renderLobby(s);
+          } else {
+            renderMatch(s);
+          }
+        };
+
+        roomES.onerror = () => {
+          // SSE auto retries
+        };
+      }
+
+      function renderLobby(s) {
+        matchMode = "online";
+        $("lobbyRoomTitle").textContent = s.name;
+        $("lobbyRoomCode").textContent = s.code;
+        $("lobbyPlayerCount").textContent = `${s.players.filter(p => p.connected).length}/8`;
+
+        const rosterEl = $("lRoster");
+        rosterEl.innerHTML = "";
+        s.players.forEach(p => {
+          const li = document.createElement("li");
+          li.innerHTML = `
+            <span class="nm">
+              ${p.name}
+              ${p.host ? '<span class="tg crown">👑 HOST</span>' : ''}
+              ${p.id === s.you.id ? '<span class="tg">(YOU)</span>' : ''}
+              ${!p.connected ? '<span class="tg" style="opacity:.5">offline</span>' : ''}
+            </span>
+            <span style="font-size:.82rem;font-weight:700;color:var(--accent)">READY</span>
+          `;
+          rosterEl.appendChild(li);
+        });
+
+        const startBtn = $("lStart");
+        const hintEl = $("lHint");
+        const connectedCount = s.players.filter(p => p.connected).length;
+
+        if (s.you.host) {
+          startBtn.hidden = false;
+          startBtn.disabled = connectedCount < 2;
+          hintEl.textContent = connectedCount < 2
+            ? "Waiting for at least 1 more player to join…"
+            : "All ready! Click Start Game to begin.";
+        } else {
+          startBtn.hidden = true;
+          hintEl.textContent = `Waiting for host (${s.players.find(p => p.host)?.name || "Host"}) to start…`;
+        }
+
+        show("lobby");
+      }
+
+      $("btnCopyCode").addEventListener("click", () => {
+        const code = $("lobbyRoomCode").textContent;
+        navigator.clipboard.writeText(code).then(() => {
+          $("btnCopyCode").textContent = "Copied!";
+          setTimeout(() => { $("btnCopyCode").textContent = "Copy"; }, 1500);
+        });
+      });
+
+      $("lStart").addEventListener("click", async () => {
+        const base = getBackendUrl();
+        sfx("tap");
+        const res = await fetch(`${base}/api/rooms/start`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code: currentRoom.code, id: currentRoom.id })
+        });
+        const d = await res.json();
+        if (!res.ok) $("lErr").textContent = d.error || "Cannot start game.";
+      });
+
+      $("lLeave").addEventListener("click", () => { sfx("tap"); leaveCurrentRoom(); });
+
+      /* ---------- Online / Bot Match Rendering ---------- */
+      const mGrid = $("mGrid"), mStrikes = $("mStrikes"), mWord = $("mWord");
+      let mKey = "", mPrevMine = 0, mPrevCalled = 0;
+      const mDrawn = new Set();
+
+      function matchPick(n) {
+        if (matchMode === "bot") {
+          botApply("you", n);
+        } else {
+          const base = getBackendUrl();
+          fetch(`${base}/api/rooms/pick`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ code: currentRoom.code, id: currentRoom.id, n })
+          });
+        }
+      }
+
+      function renderMatch(s) {
+        show("match");
+        const board = s.you.board;
+        const called = new Set(s.called || []);
+        const myTurn = s.phase === "playing" && s.turn === s.you.id;
+
+        const key = board.join(",");
+        if (key !== mKey) {
+          mKey = key;
+          mDrawn.clear();
+          mStrikes.innerHTML = "";
+          mGrid.innerHTML = "";
+          mPrevMine = 0;
+          mPrevCalled = 0;
+
+          board.forEach(n => {
+            const b = document.createElement("button");
+            b.className = "cell";
+            b.textContent = n;
+            b.dataset.n = n;
+            b.setAttribute("aria-label", "Number " + n);
+            b.addEventListener("click", () => {
+              if (b.classList.contains("playable")) matchPick(n);
+            });
+            mGrid.appendChild(b);
+          });
+        }
+
+        [...mGrid.children].forEach(b => {
+          const n = +b.dataset.n;
+          const isMarked = called.has(n);
+          b.classList.toggle("marked", isMarked);
+          b.classList.toggle("playable", myTurn && !isMarked);
+          b.classList.toggle("latest", !!s.last && s.last.n === n);
+        });
+
+        let mine = 0;
+        LINES.forEach((l, k) => {
+          if (!l.cells.every(i => called.has(board[i]))) return;
+          mine++;
+          if (mDrawn.has(k)) return;
+          mDrawn.add(k);
+          const el = document.createElementNS(NS, "line");
+          ["x1", "y1", "x2", "y2"].forEach((a, j) => el.setAttribute(a, l.p[j]));
+          el.setAttribute("pathLength", "6");
+          mStrikes.appendChild(el);
+        });
+
+        const lit = Math.min(mine, 5);
+        mWord.innerHTML = LETTERS.map((l, i) => `<div class="ball${i < lit ? " on" : ""}">${l}</div>`).join("");
+
+        if (s.called.length > mPrevCalled) {
+          sfx("tap");
+          if (s.phase === "over" && s.winners.includes(s.you.id)) setTimeout(() => sfx("win"), 150);
+          else if (mine > mPrevMine) setTimeout(() => sfx("line"), 150);
+        }
+        mPrevCalled = s.called.length;
+        mPrevMine = mine;
+
+        const nm = id => (s.players.find(p => p.id === id) || {}).name || "Someone";
+        const ban = $("mBanner");
+        ban.className = "banner";
+
+        if (s.phase === "over") {
+          ban.classList.add("win");
+          ban.textContent = s.winners.includes(s.you.id)
+            ? (s.winners.length > 1 ? "BINGO! It's a tie, you win too." : "BINGO! You win!")
+            : s.winners.map(nm).join(" & ") + (s.winners.length > 1 ? " tie with BINGO." : " got BINGO first.");
+        } else if (myTurn) {
+          ban.classList.add("mine");
+          ban.textContent = "Your turn: Pick a number";
+        } else {
+          ban.textContent = "Waiting for " + nm(s.turn) + "…";
+        }
+
+        $("mLast").textContent = s.last ? `${s.last.by} called ${s.last.n}` : "First to light up B-I-N-G-O wins.";
+        $("mAgain").hidden = s.phase !== "over";
+
+        // Roster
+        const rEl = $("mRoster");
+        rEl.innerHTML = "";
+        s.players.forEach(p => {
+          const li = document.createElement("li");
+          li.className = (p.connected ? "" : "off ") + (s.phase === "playing" && s.turn === p.id ? "turn" : "");
+          li.innerHTML = `
+            <span class="nm">
+              ${p.name}
+              ${p.id === s.you.id ? '<span class="tg">(you)</span>' : ''}
+              ${!p.connected ? '<span class="tg">offline</span>' : ''}
+            </span>
+            <div class="pl">
+              ${LETTERS.map((l, i) => `<span class="${i < p.lines ? "on" : ""}">${l}</span>`).join("")}
+            </div>
+          `;
+          rEl.appendChild(li);
+        });
+
+        $("mChips").innerHTML = s.called.map((n, i) =>
+          `<span class="${i === s.called.length - 1 ? "new" : ""}">${n}</span>`
+        ).join("");
+      }
+
+      $("mLeave").addEventListener("click", () => {
+        sfx("tap");
+        if (matchMode === "bot") {
+          bot.s = null;
+          matchMode = null;
+          toMenu("online");
+        } else {
+          leaveCurrentRoom();
+        }
+      });
+
+      $("mAgain").addEventListener("click", async () => {
+        sfx("tap");
+        if (matchMode === "bot") {
+          startBot();
+        } else {
+          const base = getBackendUrl();
+          await fetch(`${base}/api/rooms/again`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ code: currentRoom.code, id: currentRoom.id })
+          });
+        }
+      });
+
+      /* ---------- Bot Player ---------- */
+      const bot = { s: null, you: null, cpu: null };
+      const countLines = (b, called) => LINES.filter(l => l.cells.every(i => called.includes(b[i]))).length;
+
+      function botView() {
+        const s = bot.s;
+        const lc = b => Math.min(5, countLines(b, s.called));
+        return {
+          phase: s.phase, called: s.called, last: s.last, turn: s.turn, winners: s.winners,
+          you: { id: "you", name: "You", board: bot.you },
+          players: [
+            { id: "you", name: "You", connected: true, lines: lc(bot.you) },
+            { id: "bot", name: "Bot", connected: true, lines: lc(bot.cpu) }
+          ]
+        };
+      }
+
+      function startBot() {
+        matchMode = "bot";
+        bot.you = shuffle(Array.from({ length: 25 }, (_, i) => i + 1));
+        bot.cpu = shuffle(Array.from({ length: 25 }, (_, i) => i + 1));
+        bot.s = { phase: "playing", called: [], last: null, winners: [], turn: Math.random() < .5 ? "you" : "bot" };
+        show("match");
+        renderMatch(botView());
+        botTurn();
+      }
+
+      function botChoose() {
+        const done = new Set(bot.s.called);
+        let best = [], top = -1;
+        for (let n = 1; n <= 25; n++) {
+          if (done.has(n)) continue;
+          const i = bot.cpu.indexOf(n);
+          const score = LINES.filter(l => l.cells.includes(i))
+            .reduce((a, l) => a + Math.pow(l.cells.filter(c => done.has(bot.cpu[c])).length + 1, 2), 0);
+          if (score > top) { top = score; best = [n]; }
+          else if (score === top) best.push(n);
+        }
+        return best[Math.floor(Math.random() * best.length)];
+      }
+
+      function botTurn() {
+        const s = bot.s;
+        if (s.phase !== "playing" || s.turn !== "bot") return;
+        setTimeout(() => { if (bot.s === s) botApply("bot", botChoose()); }, 900);
+      }
+
+      function botApply(who, n) {
+        const s = bot.s;
+        if (!s || s.phase !== "playing" || s.turn !== who || s.called.includes(n)) return;
+        s.called.push(n);
+        s.last = { n, by: who === "you" ? "You" : "Bot" };
+        s.winners = [["you", bot.you], ["bot", bot.cpu]].filter(([, b]) => countLines(b, s.called) >= 5).map(([id]) => id);
+        if (s.winners.length) {
+          s.phase = "over";
+          s.turn = null;
+        } else {
+          s.turn = who === "you" ? "bot" : "you";
+        }
+        renderMatch(botView());
+        botTurn();
+      }
+
+      $("bot").addEventListener("click", () => {
+        sfx("tap");
+        mode = "bot";
+        from = "online";
+        go(idx, false);
+        show("picker");
+      });
+
+      // Init
+      applyTheme(HOME_THEME, false);
+      renderSoundBtn();
+      updateServerPill();
+      go(idx, false);
+    })();
+  </script>
+</body>
+
+</html>
