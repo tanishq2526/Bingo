@@ -467,6 +467,7 @@
       image-rendering: pixelated;
       color: transparent;
     }
+
     [data-theme="minecraft"] .cell.marked::before,
     [data-theme="minecraft"] .cell.marked::after {
       display: none;
@@ -494,8 +495,16 @@
     }
 
     @keyframes hop {
-      0%, 55%, 100% { transform: translateY(0); }
-      25% { transform: translateY(-16px); }
+
+      0%,
+      55%,
+      100% {
+        transform: translateY(0);
+      }
+
+      25% {
+        transform: translateY(-16px);
+      }
     }
 
     .tag {
@@ -693,8 +702,15 @@
     }
 
     @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.05);
+      }
     }
 
     #match .cell.latest {
@@ -806,7 +822,9 @@
       opacity: .6;
       margin: 4px 0;
     }
-    .divider::before, .divider::after {
+
+    .divider::before,
+    .divider::after {
       content: "";
       flex: 1;
       height: 1px;
@@ -833,7 +851,11 @@
       user-select: none;
     }
 
-    .track { position: absolute; inset: 0; }
+    .track {
+      position: absolute;
+      inset: 0;
+    }
+
     .slide {
       position: absolute;
       left: 50%;
@@ -891,7 +913,11 @@
       text-align: center;
     }
 
-    .dots { display: flex; gap: 10px; }
+    .dots {
+      display: flex;
+      gap: 10px;
+    }
+
     .dots button {
       width: 14px;
       height: 14px;
@@ -902,6 +928,7 @@
       cursor: pointer;
       transition: transform .2s, background .2s;
     }
+
     .dots button[aria-current="true"] {
       background: #ff5db1;
       transform: scale(1.3);
@@ -975,7 +1002,8 @@
 
     <div class="divider">OR JOIN BY CODE</div>
 
-    <input class="tinput" id="joinCode" maxlength="4" placeholder="4-Letter Room Code (e.g. A3F9)" style="text-transform:uppercase" autocomplete="off">
+    <input class="tinput" id="joinCode" maxlength="4" placeholder="4-Letter Room Code (e.g. A3F9)"
+      style="text-transform:uppercase" autocomplete="off">
     <input class="tinput" id="joinPlayerName" maxlength="16" placeholder="Your name" autocomplete="off">
     <div class="err" id="joinErr"></div>
     <button class="refresh" id="btnJoinByCode">Join Room</button>
@@ -1066,7 +1094,7 @@
       /* ---------- Storage ---------- */
       const store = {
         get: k => { try { return localStorage.getItem(k); } catch { return null; } },
-        set: (k, v) => { try { localStorage.setItem(k, v); } catch {} }
+        set: (k, v) => { try { localStorage.setItem(k, v); } catch { } }
       };
 
       /* ---------- Themes ---------- */
@@ -1156,7 +1184,8 @@
       /* ---------- Backend URL Management ---------- */
       // TIP: Once deployed to Render, you can paste your Render URL here (e.g. "https://bingo-backend.onrender.com")
       // so your friends don't even have to configure it manually!
-      const DEFAULT_BACKEND_URL = "";
+      const DEFAULT_BACKEND_URL = "https://bingo-gbv0.onrender.com/";
+
 
       function getBackendUrl() {
         if (DEFAULT_BACKEND_URL) return DEFAULT_BACKEND_URL.trim().replace(/\/+$/, "");
@@ -1385,7 +1414,7 @@
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ code: currentRoom.code, id: currentRoom.id })
-            }).catch(() => {});
+            }).catch(() => { });
           }
         }
         if (roomES) { roomES.close(); roomES = null; }
